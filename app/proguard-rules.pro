@@ -25,11 +25,11 @@
 
 # Kotlin data class / serialization kullanılan modeller varsa (SpeedDialItem gibi)
 # alan isimlerini koru
--keep class com.example.mybrowser.SpeedDialItem { *; }
+-keep class com.wardenbrowser.app.SpeedDialItem { *; }
 
 # SQLite/HistoryDbHelper içindeki reflection kullanımı yoksa bu kural gerekmez,
 # ama HistoryDbHelper ve ilişkili data class'ları için güvenlik amaçlı koru
--keep class com.example.mybrowser.HistoryDbHelper { *; }
+-keep class com.wardenbrowser.app.HistoryDbHelper { *; }
 
 # Crash raporlarında stack trace okunabilir kalsın diye satır numaralarını koru
 -keepattributes SourceFile,LineNumberTable

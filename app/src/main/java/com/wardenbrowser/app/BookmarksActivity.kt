@@ -1,8 +1,6 @@
-package com.example.mybrowser
+package com.wardenbrowser.app
 
-import android.os.Build
 import android.os.Bundle
-import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -10,11 +8,11 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowCompat
 import com.google.android.material.appbar.MaterialToolbar
 
-class AboutActivity : AppCompatActivity() {
+class BookmarksActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_about)
+        setContentView(R.layout.activity_bookmarks)
         
         setupStatusBar()
 
@@ -26,18 +24,6 @@ class AboutActivity : AppCompatActivity() {
             v.setPadding(0, systemBars.top, 0, 0)
             insets
         }
-        
-        findViewById<TextView>(R.id.versionText).text = "v${BuildConfig.VERSION_NAME}"
-        
-        val detailsText = StringBuilder()
-            .append("Powered by Mozilla GeckoView\n\n")
-            .append("Developer: Onur Karatas\n")
-            .append("GitHub: https://github.com/mazyLeyn/WardenBrowser\n\n")
-            .append("Android Version: ${Build.VERSION.RELEASE} (API ${Build.VERSION.SDK_INT})\n")
-            .append("Build Number: ${BuildConfig.VERSION_CODE}")
-            .toString()
-            
-        findViewById<TextView>(R.id.detailsText).text = detailsText
     }
 
     private fun setupStatusBar() {

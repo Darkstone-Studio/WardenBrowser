@@ -1,8 +1,4 @@
-- [x] Update `strings.xml` with "Warden Browser"
-- [x] Update `activity_about.xml` layout
-- [x] Update `colors.xml` comments
-- [x] Update `settings.gradle.kts` project name
-- [x] Update `README.md` documentation
-- [x] Update `AboutActivity.kt` GitHub links
-- [x] Verify build
+- [x] Implement `isMainProcess()` check in `WardenApp.kt`
+- [x] Gate `GeckoRuntime.create()` with the process check
+- [x] Verify build with `./gradlew :app:assembleDebug`
 - [x] Create walkthrough artifact

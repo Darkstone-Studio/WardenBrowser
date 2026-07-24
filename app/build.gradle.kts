@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.mybrowser"
+    namespace = "com.wardenbrowser.app"
     compileSdk {
         version = release(36) {
             minorApiLevel = 1
@@ -11,11 +11,11 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.mybrowser"
+        applicationId = "com.wardenbrowser.app"
         minSdk = 26
         targetSdk = 36
-        versionCode = 10
-        versionName = "1.3.9"
+        versionCode = 13
+        versionName = "1.3.12"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

@@ -1,4 +1,4 @@
-package com.example.mybrowser
+package com.wardenbrowser.app
 
 import android.content.res.ColorStateList
 import android.view.LayoutInflater

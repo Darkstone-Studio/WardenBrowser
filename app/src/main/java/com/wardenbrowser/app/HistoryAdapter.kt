@@ -1,4 +1,4 @@
-package com.example.mybrowser
+package com.wardenbrowser.app
 
 import android.view.LayoutInflater
 import android.view.View

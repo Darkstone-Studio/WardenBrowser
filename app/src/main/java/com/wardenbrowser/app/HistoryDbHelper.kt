@@ -1,4 +1,4 @@
-package com.example.mybrowser
+package com.wardenbrowser.app
 
 import android.content.ContentValues
 import android.content.Context

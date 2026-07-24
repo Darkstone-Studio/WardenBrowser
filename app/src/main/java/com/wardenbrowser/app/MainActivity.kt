@@ -1,4 +1,4 @@
-package com.example.mybrowser
+package com.wardenbrowser.app
 
 import android.content.Intent
 import android.os.Bundle
@@ -25,7 +25,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.mozilla.geckoview.GeckoResult
-import org.mozilla.geckoview.GeckoRuntime
 import org.mozilla.geckoview.GeckoSession
 import org.mozilla.geckoview.GeckoSessionSettings
 import org.mozilla.geckoview.GeckoView
@@ -163,7 +162,7 @@ class MainActivity : AppCompatActivity() {
             .usePrivateMode(isPrivateMode)
             .build()
         session = GeckoSession(settings)
-        val runtime = GeckoRuntime.getDefault(this)
+        val runtime = (application as WardenApp).geckoRuntime
         
         applySettings()
         
@@ -274,7 +273,7 @@ class MainActivity : AppCompatActivity() {
     private fun togglePrivateMode() {
         // Eski moddan çıkarken verileri temizle
         if (isPrivateMode) {
-            val runtime = GeckoRuntime.getDefault(this)
+            val runtime = (application as WardenApp).geckoRuntime
             runtime.storageController.clearData(StorageController.ClearFlags.ALL)
         }
         

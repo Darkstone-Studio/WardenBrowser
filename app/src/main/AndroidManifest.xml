@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
     <uses-permission android:name="android.permission.INTERNET" />
     <application
+        android:name=".WardenApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -10,7 +11,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.MyBrowser">
+        android:theme="@style/Theme.WardenBrowser">
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -25,22 +26,22 @@
         <activity
             android:name=".SettingsActivity"
             android:exported="false"
-            android:theme="@style/Theme.MyBrowser" />
+            android:theme="@style/Theme.WardenBrowser" />
 
         <activity
             android:name=".BookmarksActivity"
             android:exported="false"
-            android:theme="@style/Theme.MyBrowser" />
+            android:theme="@style/Theme.WardenBrowser" />
 
         <activity
             android:name=".HistoryActivity"
             android:exported="false"
-            android:theme="@style/Theme.MyBrowser" />
+            android:theme="@style/Theme.WardenBrowser" />
 
         <activity
             android:name=".AboutActivity"
             android:exported="false"
-            android:theme="@style/Theme.MyBrowser" />
+            android:theme="@style/Theme.WardenBrowser" />
     </application>
 
 </manifest>

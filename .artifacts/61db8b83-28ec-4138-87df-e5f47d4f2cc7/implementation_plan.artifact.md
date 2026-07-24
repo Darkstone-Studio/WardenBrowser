@@ -1,40 +1,24 @@
-# Implementation Plan - Rename App to "Warden Browser"
+# Fix Multi-Process GeckoRuntime Initialization
 
-This plan covers renaming the application from "Blackstone Browser" to "Warden Browser" across all user-facing strings, layouts, and project configurations.
+This plan addresses a critical issue where `GeckoRuntime.create()` is invoked in every process (main, GPU, tab), leading to application crashes shortly after launch. We will implement a process guard to ensure initialization only occurs in the main process.
 
 ## Proposed Changes
 
-### Strings and Resources
+### Application Class Logic
 
-#### [MODIFY] [strings.xml](file:///C:/Users/Onur/Desktop/BlackstoneBrowser%20v1.3.6/MyBrowser/app/src/main/res/values/strings.xml)
-- Change `app_name` from "Blackstone Browser" to "Warden Browser".
-- Change `brand_name_part1` from "Blackstone" to "Warden".
-
-#### [MODIFY] [activity_about.xml](file:///C:/Users/Onur/Desktop/BlackstoneBrowser%20v1.3.6/MyBrowser/app/src/main/res/layout/activity_about.xml)
-- Update the hardcoded "Blackstone Browser" text to "Warden Browser".
-
-#### [MODIFY] [colors.xml](file:///C:/Users/Onur/Desktop/BlackstoneBrowser%20v1.3.6/MyBrowser/app/src/main/res/values/colors.xml)
-- Update the comment mentioning "Blackstone Browser".
-
-### Project Configuration
-
-#### [MODIFY] [settings.gradle.kts](file:///C:/Users/Onur/Desktop/BlackstoneBrowser%20v1.3.6/MyBrowser/settings.gradle.kts)
-- Change `rootProject.name` from "BlackstoneBrowser" to "WardenBrowser".
-
-### Documentation and Metadata
-
-#### [MODIFY] [README.md](file:///C:/Users/Onur/Desktop/BlackstoneBrowser%20v1.3.6/MyBrowser/README.md)
-- Replace all occurrences of "Blackstone Browser" with "Warden Browser".
-
-#### [MODIFY] [AboutActivity.kt](file:///C:/Users/Onur/Desktop/BlackstoneBrowser%20v1.3.6/MyBrowser/app/src/main/java/com/example/mybrowser/AboutActivity.kt)
-- Update the GitHub link text if desired (optional, but consistent). I'll wait for user input on whether the GitHub repo name is also changing.
+#### [MODIFY] [WardenApp.kt](file:///C:/Users/Onur/Desktop/BlackstoneBrowser%20v1.3.6/MyBrowser/app/src/main/java/com/wardenbrowser/app/WardenApp.kt)
+- **Process Guard**: Implement an `isMainProcess()` helper function.
+    - On API 28+, use `getProcessName()`.
+    - On older APIs, iterate through `ActivityManager.getRunningAppProcesses()` to match `Process.myPid()`.
+- **Conditional Initialization**: Wrap the `GeckoRuntime` initialization logic inside a check for `isMainProcess()`.
+- **Imports**: Add necessary imports: `android.app.ActivityManager`, `android.os.Build`, and `android.os.Process`.
 
 ## Verification Plan
 
 ### Automated Tests
-- Run `./gradlew assembleDebug` to ensure the project name change in `settings.gradle.kts` doesn't break the build.
+- Build the project using `./gradlew :app:assembleDebug` to ensure no syntax or compilation errors.
 
 ### Manual Verification
-- [ ] Check the app icon label on the device/emulator home screen (should be "Warden Browser").
-- [ ] Check the "About" screen in the app (should show "Warden Browser").
-- [ ] Check the Home screen brand logo (should show "Warden Browser").
+- [ ] Launch the app and monitor stability for at least 10 seconds.
+- [ ] Check logs (if available) to confirm `GeckoRuntime.create()` is only called once.
+- [ ] Verify that GeckoView content still loads correctly in the main process.

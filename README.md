@@ -68,9 +68,8 @@ Katkılar, hata bildirimleri ve öneriler memnuniyetle karşılanır.
 3. Değişikliklerinizi yapın.
 4. Pull Request gönderin.
 
-## Gizlilik & Güvenlik 
-
-https://mazyleyn.github.io/WardenBrowser/privacy-policy.html
+## Gizlilik & Güvenlik
+[Gizlilik Politikası](https://mazyleyn.github.io/WardenBrowser/privacy-policy.html)
 
 ## Lisans
 

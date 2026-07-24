@@ -35,7 +35,7 @@ gösterebilir — bu normaldir.
 
 ## İndir
 
-En son sürüm: https://github.com/mazyLeyn/WardenBrowser/releases/latest
+En son sürüm: [Download v1.3.12](https://github.com/mazyLeyn/WardenBrowser/releases/latest)
 
 ## Kullanılan Teknolojiler
 

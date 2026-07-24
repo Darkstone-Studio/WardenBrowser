@@ -1,4 +1,0 @@
-- [x] Implement `isMainProcess()` check in `WardenApp.kt`
-- [x] Gate `GeckoRuntime.create()` with the process check
-- [x] Verify build with `./gradlew :app:assembleDebug`
-- [x] Create walkthrough artifact

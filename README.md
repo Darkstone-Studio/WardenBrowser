@@ -62,6 +62,7 @@ engelleme özelliği test edilip stabilite sorunları nedeniyle geri alındı.
 ## Güvenlik & Gizlilik
 [Gizlilik Politikası](https://mazyleyn.github.io/WardenBrowser/privacy-policy.html)
 
+
 ## Katkıda Bulunma
 
 Katkılar, hata bildirimleri ve öneriler memnuniyetle karşılanır.

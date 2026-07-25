@@ -35,7 +35,7 @@ gösterebilir — bu normaldir.
 
 ## İndir
 
-En son sürüm: https://github.com/mazyLeyn/WardenBrowser/releases/latest
+En son sürüm: [Download v1.4.14](https://github.com/mazyLeyn/WardenBrowser/releases/latest)
 
 ## Kullanılan Teknolojiler
 
@@ -51,7 +51,7 @@ En son sürüm: https://github.com/mazyLeyn/WardenBrowser/releases/latest
 - [x] Gizli sekme modu
 - [ ] Yer imleri
 - [ ] İzleyici/reklam engelleme (geliştirme aşamasında, henüz kararlı değil)
-- [ ] Çoklu sekme desteği
+- [x] Çoklu sekme desteği
 - [ ] İndirme yöneticisi
 
 ## Bilinen Kısıtlar

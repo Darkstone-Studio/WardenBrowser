@@ -59,6 +59,9 @@ En son sürüm: [Download v1.4.14](https://github.com/mazyLeyn/WardenBrowser/rel
 Proje aktif geliştirme aşamasında. Yer imleri henüz işlevsel değil, izleyici
 engelleme özelliği test edilip stabilite sorunları nedeniyle geri alındı.
 
+## Güvenlik & Gizlilik
+[Gizlilik Politikası](https://mazyleyn.github.io/WardenBrowser/privacy-policy.html)
+
 ## Katkıda Bulunma
 
 Katkılar, hata bildirimleri ve öneriler memnuniyetle karşılanır.

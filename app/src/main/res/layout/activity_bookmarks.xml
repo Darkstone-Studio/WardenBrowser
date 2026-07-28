@@ -13,7 +13,7 @@
         android:minHeight="?attr/actionBarSize"
         app:navigationIcon="@drawable/ic_back"
         app:navigationIconTint="@color/accent_blue"
-        app:title="Yer İmleri"
+        app:title="@string/bookmarks_title"
         app:titleTextColor="@color/text_primary" />
 
     <LinearLayout
@@ -33,7 +33,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Henüz kayıtlı yer imi bulunmuyor."
+            android:text="@string/bookmarks_empty"
             android:textColor="@color/text_primary"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -42,7 +42,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Yakında eklenecek"
+            android:text="@string/bookmarks_coming_soon"
             android:textColor="@color/text_secondary"
             android:textSize="14sp" />
 

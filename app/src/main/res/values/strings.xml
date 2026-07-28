@@ -4,4 +4,78 @@
     <string name="brand_name_part2">Browser</string>
     <string name="beta_tag">Beta</string>
     <string name="privacy_policy">Gizlilik Politikası</string>
+
+    <string name="toast_engine_refreshed">Tarayıcı motoru yenilendi</string>
+    <string name="toast_load_error">Yükleme Hatası: %1$s</string>
+    <string name="toast_private_mode_on">Gizli sekme açıldı — geçmiş kaydedilmeyecek</string>
+    <string name="toast_private_mode_off">Normal sekmeye geçildi</string>
+    <string name="toast_history_cleared_exiting">Geçmiş temizlendi ve çıkılıyor...</string>
+
+    <string name="settings_title">Ayarlar</string>
+    <string name="toast_history_cleared">Geçmiş temizlendi</string>
+    <string name="toast_cookies_cleared">Çerezler temizlendi</string>
+    <string name="toast_cache_cleared">Önbellek temizlendi</string>
+    <string name="pref_category_general">Genel</string>
+    <string name="pref_theme">Tema</string>
+    <string name="pref_search_engine">Varsayılan Arama Motoru</string>
+    <string name="pref_language">Dil</string>
+    <string name="pref_category_advanced">Gelişmiş</string>
+    <string name="pref_javascript">JavaScript</string>
+    <string name="pref_desktop_mode">Masaüstü Modu</string>
+    <string name="pref_tracker_blocking">Takip Engelleme</string>
+    <string name="pref_tracker_blocking_summary">Reklam ve analitik takip scriptlerini engeller</string>
+    <string name="pref_safe_browsing">Güvenli Gezinme</string>
+    <string name="pref_safe_browsing_summary">Kötü amaçlı ve kimlik avı sitelerine karşı uyarır</string>
+    <string name="pref_category_data">Veri Temizleme</string>
+    <string name="pref_clear_cookies">Çerezleri Temizle</string>
+    <string name="pref_clear_cache">Önbelleği Temizle</string>
+    <string name="pref_clear_history">Geçmişi Temizle</string>
+    <string name="pref_category_about">Hakkında</string>
+    <string name="pref_version">Uygulama Sürümü</string>
+    <string name="pref_licenses">Lisans Bilgisi</string>
+    <string name="pref_github">GitHub Bağlantısı</string>
+
+    <string name="about_title">Hakkında</string>
+    <string name="about_powered_by">Powered by Mozilla GeckoView</string>
+    <string name="about_developer">Geliştirici: Darkstone Studio</string>
+    <string name="about_android_version">Android Sürümü: %1$s (API %2$d)</string>
+    <string name="about_build_number">Yapı Numarası: %1$d</string>
+
+    <string name="bookmarks_title">Yer İmleri</string>
+    <string name="bookmarks_empty">Henüz kayıtlı yer imi bulunmuyor.</string>
+    <string name="bookmarks_coming_soon">Yakında eklenecek</string>
+
+    <string name="history_title">Geçmiş</string>
+    <string name="history_clear_short">Temiz</string>
+    <string name="history_clear_full">Geçmişi Temizle</string>
+
+    <string name="tabs_title">Sekmeler</string>
+    <string name="tabs_new_tab">Yeni Sekme</string>
+
+    <string name="address_bar_hint">Ara ya da adres girin</string>
+    <string name="homepage_welcome">Premium tarama deneyimine hoş geldiniz</string>
+
+    <string name="menu_bookmarks">Yer İmleri</string>
+    <string name="menu_history">Geçmiş</string>
+    <string name="menu_theme">Tema</string>
+    <string name="menu_settings">Ayarlar</string>
+    <string name="menu_about">Hakkında</string>
+    <string name="menu_clear_exit">Temizle ve Çık</string>
+    <string name="theme_dialog_title">Tema Seçin</string>
+
+    <string name="nav_back">Geri</string>
+    <string name="nav_forward">İleri</string>
+    <string name="nav_home">Ana Sayfa</string>
+    <string name="nav_refresh">Yenile</string>
+    <string name="nav_menu">Menü</string>
+    <string name="tab_default_title">Yeni Sekme</string>
+
+    <string name="welcome_heading">Hoş Geldiniz!</string>
+    <string name="welcome_subtitle">Hızlı, gizliliğe önem veren ve reklamsız bir tarama deneyimi.</string>
+    <string name="welcome_thanks">Bizi seçtiğiniz için teşekkürler!</string>
+    <string name="welcome_get_started">Başla</string>
+    <string name="search_engine_desc">Arama motoru</string>
+    <string name="search_engine_badge_default">G</string>
+    <string name="search_engine_icon_desc">Arama motoru ikonu</string>
+    <string name="pref_support">Destek Ol! ❤️</string>
 </resources>

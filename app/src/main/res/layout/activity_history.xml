@@ -16,7 +16,7 @@
             android:minHeight="?attr/actionBarSize"
             app:navigationIcon="@drawable/ic_back"
             app:navigationIconTint="@color/accent_blue"
-            app:title="Geçmiş"
+            app:title="@string/history_title"
             app:titleTextColor="@color/text_primary" />
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -32,7 +32,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Temiz"
+        android:text="@string/history_clear_short"
         android:textColor="@color/text_secondary"
         android:textSize="18sp"
         android:visibility="gone" />
@@ -43,7 +43,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center_horizontal"
         android:layout_marginBottom="32dp"
-        android:text="Geçmişi Temizle"
+        android:text="@string/history_clear_full"
         android:textColor="@color/white"
         app:backgroundTint="#EF4444"
         app:icon="@drawable/ic_refresh"

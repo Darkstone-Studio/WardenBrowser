@@ -33,11 +33,11 @@ class AboutActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.versionText).text = "v${BuildConfig.VERSION_NAME}"
         
         val detailsText = StringBuilder()
-            .append("Powered by Mozilla GeckoView\n\n")
-            .append("Developer: Onur Karatas\n")
+            .append(getString(R.string.about_powered_by)).append("\n\n")
+            .append(getString(R.string.about_developer)).append("\n")
             .append("GitHub: https://github.com/mazyLeyn/WardenBrowser\n\n")
-            .append("Android Version: ${Build.VERSION.RELEASE} (API ${Build.VERSION.SDK_INT})\n")
-            .append("Build Number: ${BuildConfig.VERSION_CODE}")
+            .append(getString(R.string.about_android_version, Build.VERSION.RELEASE, Build.VERSION.SDK_INT)).append("\n")
+            .append(getString(R.string.about_build_number, BuildConfig.VERSION_CODE))
             .toString()
             
         findViewById<TextView>(R.id.detailsText).text = detailsText

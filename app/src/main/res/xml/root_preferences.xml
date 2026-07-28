@@ -1,56 +1,72 @@
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory app:title="Görünüm">
+    <PreferenceCategory app:title="@string/pref_category_general">
         <ListPreference
             app:defaultValue="dark"
             app:entries="@array/theme_entries"
             app:entryValues="@array/theme_values"
             app:key="theme"
-            app:title="Tema" />
-    </PreferenceCategory>
-
-    <PreferenceCategory app:title="Arama">
+            app:title="@string/pref_theme" />
         <ListPreference
             app:defaultValue="google"
             app:entries="@array/search_engine_entries"
             app:entryValues="@array/search_engine_values"
             app:key="search_engine"
-            app:title="Varsayılan Arama Motoru" />
+            app:title="@string/pref_search_engine" />
+        <ListPreference
+            app:defaultValue="system"
+            app:entries="@array/language_entries"
+            app:entryValues="@array/language_values"
+            app:key="app_language"
+            app:title="@string/pref_language" />
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="Gelişmiş">
+    <PreferenceCategory app:title="@string/pref_category_advanced">
         <SwitchPreferenceCompat
             app:defaultValue="true"
             app:key="javascript_enabled"
-            app:title="JavaScript" />
+            app:title="@string/pref_javascript" />
         <SwitchPreferenceCompat
             app:defaultValue="false"
             app:key="desktop_mode"
-            app:title="Masaüstü Modu" />
+            app:title="@string/pref_desktop_mode" />
+        <SwitchPreferenceCompat
+            app:defaultValue="true"
+            app:key="tracker_blocking_enabled"
+            app:title="@string/pref_tracker_blocking"
+            app:summary="@string/pref_tracker_blocking_summary" />
+        <SwitchPreferenceCompat
+            app:defaultValue="true"
+            app:key="safe_browsing_enabled"
+            app:title="@string/pref_safe_browsing"
+            app:summary="@string/pref_safe_browsing_summary" />
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="Veri Temizleme">
+    <PreferenceCategory app:title="@string/pref_category_data">
         <Preference
             app:key="clear_cookies"
-            app:title="Çerezleri Temizle" />
+            app:title="@string/pref_clear_cookies" />
         <Preference
             app:key="clear_cache"
-            app:title="Önbelleği Temizle" />
+            app:title="@string/pref_clear_cache" />
         <Preference
             app:key="clear_history"
-            app:title="Geçmişi Temizle" />
+            app:title="@string/pref_clear_history" />
     </PreferenceCategory>
 
-    <PreferenceCategory app:title="Hakkında">
+    <PreferenceCategory app:title="@string/pref_category_about">
         <Preference
             app:key="version"
-            app:title="Uygulama Sürümü" />
+            app:title="@string/pref_version" />
         <Preference
             app:key="licenses"
-            app:title="Lisans Bilgisi" />
+            app:title="@string/pref_licenses" />
         <Preference
             app:key="github"
-            app:title="GitHub Bağlantısı" />
+            app:title="@string/pref_github" />
+        <Preference
+            app:key="support"
+            app:title="@string/pref_support" />
     </PreferenceCategory>
 
 </PreferenceScreen>

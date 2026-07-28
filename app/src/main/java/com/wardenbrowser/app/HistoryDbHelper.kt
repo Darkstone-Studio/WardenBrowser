@@ -85,4 +85,9 @@ class HistoryDbHelper private constructor(context: Context) : SQLiteOpenHelper(c
         db.delete(TABLE_HISTORY, null, null)
         // db.close() kaldırıldı
     }
+
+    fun deleteHistoryItem(id: Long) {
+        val db = this.writableDatabase
+        db.delete(TABLE_HISTORY, "$KEY_ID = ?", arrayOf(id.toString()))
+    }
 }

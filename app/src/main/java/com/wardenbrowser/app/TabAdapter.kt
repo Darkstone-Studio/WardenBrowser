@@ -27,7 +27,7 @@ class TabAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = items[position]
-        holder.titleText.text = item.title
+        holder.titleText.text = item.title.ifBlank { holder.itemView.context.getString(R.string.tab_default_title) }
         holder.urlText.text = item.url
         holder.itemView.setOnClickListener { onTabClick(item) }
         holder.closeButton.setOnClickListener { onCloseClick(item) }

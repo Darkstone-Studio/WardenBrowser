@@ -13,6 +13,8 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowCompat
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.SwitchPreferenceCompat
+import com.google.android.material.appbar.MaterialToolbar
 import org.mozilla.geckoview.StorageController
 
 class SettingsActivity : AppCompatActivity() {
@@ -24,10 +26,12 @@ class SettingsActivity : AppCompatActivity() {
         
         setupStatusBar()
 
-        val container = findViewById<android.view.View>(R.id.settings_container)
-        ViewCompat.setOnApplyWindowInsetsListener(container) { v, insets ->
+        val toolbar = findViewById<MaterialToolbar>(R.id.toolbar)
+        toolbar.setNavigationOnClickListener { finish() }
+
+        ViewCompat.setOnApplyWindowInsetsListener(toolbar) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(0, systemBars.top, 0, systemBars.bottom)
+            v.setPadding(0, systemBars.top, 0, 0)
             insets
         }
 
@@ -37,9 +41,6 @@ class SettingsActivity : AppCompatActivity() {
                 .replace(R.id.settings_container, SettingsFragment())
                 .commit()
         }
-        
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        title = "Settings"
     }
 
     private fun setupStatusBar() {
@@ -65,7 +66,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         // Geçmişi Temizle
         findPreference<Preference>("clear_history")?.setOnPreferenceClickListener {
             HistoryDbHelper.getInstance(requireContext()).clearHistory()
-            Toast.makeText(context, "Geçmiş temizlendi", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, getString(R.string.toast_history_cleared), Toast.LENGTH_SHORT).show()
             true
         }
 
@@ -73,7 +74,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         findPreference<Preference>("clear_cookies")?.setOnPreferenceClickListener {
             val runtime = (requireActivity().application as WardenApp).geckoRuntime
             runtime.storageController.clearData(StorageController.ClearFlags.COOKIES)
-            Toast.makeText(context, "Çerezler temizlendi", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, getString(R.string.toast_cookies_cleared), Toast.LENGTH_SHORT).show()
             true
         }
 
@@ -81,13 +82,13 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         findPreference<Preference>("clear_cache")?.setOnPreferenceClickListener {
             val runtime = (requireActivity().application as WardenApp).geckoRuntime
             runtime.storageController.clearData(StorageController.ClearFlags.ALL_CACHES)
-            Toast.makeText(context, "Önbellek temizlendi", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, getString(R.string.toast_cache_cleared), Toast.LENGTH_SHORT).show()
             true
         }
 
-        // Lisanslar (About sayfasına yönlendir)
+        // Lisanslar (AboutLibraries LibsActivity'ye yönlendir)
         findPreference<Preference>("licenses")?.setOnPreferenceClickListener {
-            startActivity(Intent(context, AboutActivity::class.java))
+            startActivity(Intent(context, com.mikepenz.aboutlibraries.ui.LibsActivity::class.java))
             true
         }
 
@@ -95,6 +96,51 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         findPreference<Preference>("github")?.setOnPreferenceClickListener {
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/mazyLeyn/WardenBrowser"))
             startActivity(intent)
+            true
+        }
+
+        // Destek Ol
+        findPreference<Preference>("support")?.setOnPreferenceClickListener {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/sponsors/mazyLeyn"))
+            startActivity(intent)
+            true
+        }
+
+        // Takip Engelleme
+        findPreference<SwitchPreferenceCompat>("tracker_blocking_enabled")?.setOnPreferenceChangeListener { _, newValue ->
+            val enabled = newValue as Boolean
+            val runtime = (requireActivity().application as WardenApp).geckoRuntime
+            runtime.settings.contentBlocking.setAntiTracking(
+                if (enabled) org.mozilla.geckoview.ContentBlocking.AntiTracking.DEFAULT
+                else org.mozilla.geckoview.ContentBlocking.AntiTracking.NONE
+            )
+            true
+        }
+
+        // Güvenli Gezinme
+        findPreference<SwitchPreferenceCompat>("safe_browsing_enabled")?.setOnPreferenceChangeListener { _, newValue ->
+            val enabled = newValue as Boolean
+            val runtime = (requireActivity().application as WardenApp).geckoRuntime
+            runtime.settings.contentBlocking.setSafeBrowsing(
+                if (enabled) org.mozilla.geckoview.ContentBlocking.SafeBrowsing.DEFAULT
+                else org.mozilla.geckoview.ContentBlocking.SafeBrowsing.NONE
+            )
+            true
+        }
+
+        // Dil Değiştirme
+        findPreference<androidx.preference.ListPreference>("app_language")?.setOnPreferenceChangeListener { _, newValue ->
+            val localeTag = when (newValue as String) {
+                "tr" -> "tr"
+                "en" -> "en"
+                else -> null // system default
+            }
+            val localeList = if (localeTag != null) {
+                androidx.core.os.LocaleListCompat.forLanguageTags(localeTag)
+            } else {
+                androidx.core.os.LocaleListCompat.getEmptyLocaleList()
+            }
+            androidx.appcompat.app.AppCompatDelegate.setApplicationLocales(localeList)
             true
         }
     }

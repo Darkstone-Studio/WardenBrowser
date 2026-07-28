@@ -44,7 +44,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var homeSearchBar: EditText
     private lateinit var btnTabs: android.widget.TextView
     private lateinit var btnPrivateMode: ImageButton
-    private lateinit var privateModeIndicator: View
     private lateinit var speedDialRecyclerView: RecyclerView
     private lateinit var glowView: View
     private lateinit var addressBarContainer: View
@@ -101,6 +100,7 @@ class MainActivity : AppCompatActivity() {
         } else {
             setupGeckoView()
         }
+        refreshEngineBadge()
         setupListeners()
         setupSpeedDial()
         setupKeyboardAnimation()
@@ -163,7 +163,6 @@ class MainActivity : AppCompatActivity() {
         
         btnTabs = findViewById(R.id.btnTabs)
         btnPrivateMode = findViewById(R.id.btnPrivateMode)
-        privateModeIndicator = findViewById(R.id.privateModeIndicator)
         speedDialRecyclerView = findViewById(R.id.speedDialRecyclerView)
         glowView = findViewById(R.id.glowView)
         addressBarContainer = findViewById(R.id.addressBarContainer)
@@ -201,7 +200,7 @@ class MainActivity : AppCompatActivity() {
         setupGeckoView()
         showHomepage()
         if (showToast) {
-            Toast.makeText(this, "Tarayıcı motoru yenilendi", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.toast_engine_refreshed), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -221,7 +220,7 @@ class MainActivity : AppCompatActivity() {
             switchToTab(newTab)
         }
         if (showToast) {
-            Toast.makeText(this, "Tarayıcı motoru yenilendi", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.toast_engine_refreshed), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -272,7 +271,7 @@ class MainActivity : AppCompatActivity() {
     private fun attachDelegates(target: GeckoSession) {
         target.navigationDelegate = object : GeckoSession.NavigationDelegate {
             override fun onLoadError(session: GeckoSession, uri: String?, error: WebRequestError): GeckoResult<String>? {
-                Toast.makeText(this@MainActivity, "Load Error: ${error.code}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@MainActivity, getString(R.string.toast_load_error, error.code.toString()), Toast.LENGTH_SHORT).show()
                 return null
             }
 
@@ -411,6 +410,10 @@ class MainActivity : AppCompatActivity() {
             togglePrivateMode()
         }
 
+        findViewById<View>(R.id.btnSearchEngineSelector).setOnClickListener {
+            showEngineSelectorMenu(it)
+        }
+
         btnTabs.setOnClickListener {
             tabManagerLauncher.launch(Intent(this, TabManagerActivity::class.java))
         }
@@ -425,9 +428,9 @@ class MainActivity : AppCompatActivity() {
         showHomepage()
 
         if (targetPrivate) {
-            Toast.makeText(this, "Gizli sekme açıldı — geçmiş kaydedilmeyecek", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.toast_private_mode_on), Toast.LENGTH_SHORT).show()
         } else {
-            Toast.makeText(this, "Normal sekmeye geçildi", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.toast_private_mode_off), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -511,7 +514,6 @@ class MainActivity : AppCompatActivity() {
         btnPrivateMode.imageTintList = android.content.res.ColorStateList.valueOf(
             if (isPrivateMode) accentColor else finalIconColor
         )
-        privateModeIndicator.visibility = if (isPrivateMode) View.VISIBLE else View.GONE
         
         // Logo/Marka renkleri
         findViewById<android.widget.TextView>(R.id.brandPart1).setTextColor(accentColor)
@@ -603,7 +605,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.menu_about -> startActivity(Intent(this, AboutActivity::class.java))
                 R.id.menu_clear_exit -> {
                     dbHelper.clearHistory()
-                    Toast.makeText(this, "Geçmiş temizlendi ve çıkılıyor...", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, getString(R.string.toast_history_cleared_exiting), Toast.LENGTH_SHORT).show()
                     finishAffinity()
                 }
             }
@@ -613,11 +615,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showThemeSelector() {
-        val themes = arrayOf("Sistem", "Açık", "Koyu")
-        val themeValues = arrayOf("system", "light", "dark")
+        val themes = resources.getStringArray(R.array.theme_entries)
+        val themeValues = resources.getStringArray(R.array.theme_values)
         
         MaterialAlertDialogBuilder(this)
-            .setTitle("Tema Seçin")
+            .setTitle(getString(R.string.theme_dialog_title))
             .setItems(themes) { _, which ->
                 val selectedTheme = themeValues[which]
                 PreferenceManager.getDefaultSharedPreferences(this).edit()
@@ -701,5 +703,93 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(0, 0, 0, systemBars.bottom)
             insets
         }
+    }
+
+    private fun engineFaviconUrl(engineKey: String): String {
+        if (engineKey == "bing") {
+            return "https://www.bing.com/favicon.ico"
+        }
+        val domain = when (engineKey) {
+            "google" -> "google.com"
+            "duckduckgo" -> "duckduckgo.com"
+            "brave" -> "brave.com"
+            else -> "google.com"
+        }
+        return "https://www.google.com/s2/favicons?domain=$domain&sz=128"
+    }
+
+    private fun engineFallbackLetter(engineKey: String): Pair<String, Int> = when (engineKey) {
+        "google" -> "G" to android.graphics.Color.parseColor("#4285F4")
+        "duckduckgo" -> "D" to android.graphics.Color.parseColor("#DE5833")
+        "bing" -> "B" to android.graphics.Color.parseColor("#008373")
+        "brave" -> "Br" to android.graphics.Color.parseColor("#FB542B")
+        else -> "G" to android.graphics.Color.parseColor("#4285F4")
+    }
+
+    private fun refreshEngineBadge() {
+        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        val engine = prefs.getString("search_engine", "google") ?: "google"
+        val badge = findViewById<android.widget.ImageView>(R.id.searchEngineBadge)
+
+        com.bumptech.glide.Glide.with(this)
+            .load(engineFaviconUrl(engine))
+            .override(64, 64)
+            .circleCrop()
+            .listener(object : com.bumptech.glide.request.RequestListener<android.graphics.drawable.Drawable> {
+                override fun onLoadFailed(
+                    e: com.bumptech.glide.load.engine.GlideException?,
+                    model: Any?,
+                    target: com.bumptech.glide.request.target.Target<android.graphics.drawable.Drawable>,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    applyLetterBadge(engine, badge)
+                    return true
+                }
+
+                override fun onResourceReady(
+                    resource: android.graphics.drawable.Drawable,
+                    model: Any,
+                    target: com.bumptech.glide.request.target.Target<android.graphics.drawable.Drawable>?,
+                    dataSource: com.bumptech.glide.load.DataSource,
+                    isFirstResource: Boolean
+                ): Boolean = false
+            })
+            .into(badge)
+    }
+
+    private fun applyLetterBadge(engine: String, badge: android.widget.ImageView) {
+        val (letter, color) = engineFallbackLetter(engine)
+        val size = 96
+        val bmp = android.graphics.Bitmap.createBitmap(size, size, android.graphics.Bitmap.Config.ARGB_8888)
+        val canvas = android.graphics.Canvas(bmp)
+        val paint = android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG).apply { this.color = color }
+        canvas.drawCircle(size / 2f, size / 2f, size / 2f, paint)
+        val textPaint = android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG).apply {
+            this.color = android.graphics.Color.WHITE
+            textSize = size * 0.45f
+            textAlign = android.graphics.Paint.Align.CENTER
+            isFakeBoldText = true
+        }
+        val yPos = size / 2f - (textPaint.descent() + textPaint.ascent()) / 2f
+        canvas.drawText(letter, size / 2f, yPos, textPaint)
+        badge.setImageDrawable(android.graphics.drawable.BitmapDrawable(resources, bmp))
+    }
+
+    private fun showEngineSelectorMenu(anchor: View) {
+        val popup = androidx.appcompat.widget.PopupMenu(this, anchor)
+        val entries = resources.getStringArray(R.array.search_engine_entries)
+        popup.menu.add(0, 1, 0, entries[0])
+        popup.menu.add(0, 2, 1, entries[1])
+        popup.menu.add(0, 3, 2, entries[2])
+        popup.menu.add(0, 4, 3, entries[3])
+        popup.setOnMenuItemClickListener { item ->
+            val newEngine = when (item.itemId) {
+                1 -> "google"; 2 -> "duckduckgo"; 3 -> "bing"; 4 -> "brave"; else -> "google"
+            }
+            PreferenceManager.getDefaultSharedPreferences(this).edit().putString("search_engine", newEngine).apply()
+            refreshEngineBadge()
+            true
+        }
+        popup.show()
     }
 }

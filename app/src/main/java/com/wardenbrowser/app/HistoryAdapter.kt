@@ -3,17 +3,20 @@ package com.wardenbrowser.app
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 class HistoryAdapter(
     private val items: List<HistoryItem>,
-    private val onItemClick: (HistoryItem) -> Unit
+    private val onItemClick: (HistoryItem) -> Unit,
+    private val onDeleteClick: (HistoryItem) -> Unit
 ) : RecyclerView.Adapter<HistoryAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val titleText: TextView = view.findViewById(R.id.historyTitle)
         val urlText: TextView = view.findViewById(R.id.historyUrl)
+        val deleteButton: ImageButton = view.findViewById(R.id.btnDeleteHistoryItem)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -27,6 +30,7 @@ class HistoryAdapter(
         holder.titleText.text = item.title
         holder.urlText.text = item.url
         holder.itemView.setOnClickListener { onItemClick(item) }
+        holder.deleteButton.setOnClickListener { onDeleteClick(item) }
     }
 
     override fun getItemCount() = items.size

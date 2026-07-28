@@ -4,25 +4,25 @@
         android:id="@+id/nav_back"
         android:icon="@drawable/ic_back"
         android:checkable="false"
-        android:title="Back" />
+        android:title="@string/nav_back" />
     <item
         android:id="@+id/nav_forward"
         android:icon="@drawable/ic_forward"
         android:checkable="false"
-        android:title="Forward" />
+        android:title="@string/nav_forward" />
     <item
         android:id="@+id/nav_home"
         android:icon="@drawable/ic_home"
         android:checkable="false"
-        android:title="Home" />
+        android:title="@string/nav_home" />
     <item
         android:id="@+id/nav_refresh"
         android:icon="@drawable/ic_refresh"
         android:checkable="false"
-        android:title="Refresh" />
+        android:title="@string/nav_refresh" />
     <item
         android:id="@+id/nav_menu"
         android:icon="@drawable/ic_menu"
         android:checkable="false"
-        android:title="Menü" />
+        android:title="@string/nav_menu" />
 </menu>

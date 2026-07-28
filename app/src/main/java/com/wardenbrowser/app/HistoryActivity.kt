@@ -67,14 +67,21 @@ class HistoryActivity : AppCompatActivity() {
     private fun loadHistory() {
         val history = dbHelper.getAllHistory()
         recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = HistoryAdapter(history) { item ->
-            val intent = Intent(this, MainActivity::class.java).apply {
-                putExtra("load_url", item.url)
-                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+        recyclerView.adapter = HistoryAdapter(
+            items = history,
+            onItemClick = { item ->
+                val intent = Intent(this, MainActivity::class.java).apply {
+                    putExtra("load_url", item.url)
+                    flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                }
+                startActivity(intent)
+                finish()
+            },
+            onDeleteClick = { item ->
+                dbHelper.deleteHistoryItem(item.id)
+                loadHistory()
             }
-            startActivity(intent)
-            finish()
-        }
+        )
         
         val isEmpty = history.isEmpty()
         btnClear.visibility = if (isEmpty) View.GONE else View.VISIBLE

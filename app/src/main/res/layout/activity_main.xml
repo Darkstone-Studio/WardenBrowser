@@ -27,24 +27,41 @@
                 android:background="@drawable/search_bar_background"
                 android:paddingHorizontal="12dp">
 
-                <ImageView
-                    android:id="@+id/privateModeIndicator"
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    android:layout_alignParentStart="true"
+                <FrameLayout
+                    android:id="@+id/btnSearchEngineSelector"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
                     android:layout_centerVertical="true"
-                    android:src="@drawable/ic_private_mode"
-                    android:visibility="gone"
-                    app:tint="@color/private_mode_accent" />
+                    android:layout_marginEnd="6dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/search_engine_desc">
+
+                    <ImageView
+                        android:id="@+id/searchEngineBadge"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center"
+                        android:background="@drawable/bg_engine_badge"
+                        android:padding="3dp"
+                        android:scaleType="centerCrop"
+                        android:contentDescription="@string/search_engine_icon_desc" />
+
+                    <ImageView
+                        android:layout_width="10dp"
+                        android:layout_height="10dp"
+                        android:layout_gravity="bottom|end"
+                        android:src="@drawable/ic_dropdown_chevron"
+                        app:tint="@color/icon_gray" />
+                </FrameLayout>
 
                 <EditText
                     android:id="@+id/toolbarSearchBar"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_toEndOf="@id/privateModeIndicator"
+                    android:layout_toEndOf="@id/btnSearchEngineSelector"
                     android:layout_toStartOf="@+id/btnTabs"
                     android:background="@android:color/transparent"
-                    android:hint="Search or enter address"
+                    android:hint="@string/address_bar_hint"
                     android:imeOptions="actionSearch"
                     android:inputType="textUri"
                     android:maxLines="1"
@@ -172,7 +189,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="32dp"
-                    android:text="Welcome to premium browsing"
+                    android:text="@string/homepage_welcome"
                     android:textColor="@color/text_secondary"
                     android:textSize="16sp" />
 
@@ -189,7 +206,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@android:color/transparent"
-                        android:hint="Search or enter address..."
+                        android:hint="@string/address_bar_hint"
                         android:imeOptions="actionSearch"
                         android:inputType="textUri"
                         android:maxLines="1"

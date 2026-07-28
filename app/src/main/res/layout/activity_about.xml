@@ -13,7 +13,7 @@
         android:minHeight="?attr/actionBarSize"
         app:navigationIcon="@drawable/ic_back"
         app:navigationIconTint="@color/accent_blue"
-        app:title="Hakkında"
+        app:title="@string/about_title"
         app:titleTextColor="@color/text_primary" />
 
     <ScrollView

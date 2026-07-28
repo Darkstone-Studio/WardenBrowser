@@ -1,0 +1,81 @@
+<resources>
+    <string name="app_name">Warden Browser</string>
+    <string name="brand_name_part1">Warden</string>
+    <string name="brand_name_part2">Browser</string>
+    <string name="beta_tag">Beta</string>
+    <string name="privacy_policy">Privacy Policy</string>
+
+    <string name="toast_engine_refreshed">Browser engine refreshed</string>
+    <string name="toast_load_error">Load Error: %1$s</string>
+    <string name="toast_private_mode_on">Private tab opened — history won\'t be saved</string>
+    <string name="toast_private_mode_off">Switched to normal tab</string>
+    <string name="toast_history_cleared_exiting">History cleared, exiting...</string>
+
+    <string name="settings_title">Settings</string>
+    <string name="toast_history_cleared">History cleared</string>
+    <string name="toast_cookies_cleared">Cookies cleared</string>
+    <string name="toast_cache_cleared">Cache cleared</string>
+    <string name="pref_category_general">General</string>
+    <string name="pref_theme">Theme</string>
+    <string name="pref_search_engine">Default Search Engine</string>
+    <string name="pref_language">Language</string>
+    <string name="pref_category_advanced">Advanced</string>
+    <string name="pref_javascript">JavaScript</string>
+    <string name="pref_desktop_mode">Desktop Mode</string>
+    <string name="pref_tracker_blocking">Tracker Blocking</string>
+    <string name="pref_tracker_blocking_summary">Blocks ads and analytics tracking scripts</string>
+    <string name="pref_safe_browsing">Safe Browsing</string>
+    <string name="pref_safe_browsing_summary">Warns against malicious and phishing sites</string>
+    <string name="pref_category_data">Clear Data</string>
+    <string name="pref_clear_cookies">Clear Cookies</string>
+    <string name="pref_clear_cache">Clear Cache</string>
+    <string name="pref_clear_history">Clear History</string>
+    <string name="pref_category_about">About</string>
+    <string name="pref_version">App Version</string>
+    <string name="pref_licenses">License Info</string>
+    <string name="pref_github">GitHub Link</string>
+
+    <string name="about_title">About</string>
+    <string name="about_powered_by">Powered by Mozilla GeckoView</string>
+    <string name="about_developer">Developer: Darkstone Studio</string>
+    <string name="about_android_version">Android Version: %1$s (API %2$d)</string>
+    <string name="about_build_number">Build Number: %1$d</string>
+
+    <string name="bookmarks_title">Bookmarks</string>
+    <string name="bookmarks_empty">No bookmarks saved yet.</string>
+    <string name="bookmarks_coming_soon">Coming soon</string>
+
+    <string name="history_title">History</string>
+    <string name="history_clear_short">Clear</string>
+    <string name="history_clear_full">Clear History</string>
+
+    <string name="tabs_title">Tabs</string>
+    <string name="tabs_new_tab">New Tab</string>
+
+    <string name="address_bar_hint">Search or enter address</string>
+    <string name="homepage_welcome">Welcome to premium browsing</string>
+
+    <string name="menu_bookmarks">Bookmarks</string>
+    <string name="menu_history">History</string>
+    <string name="menu_theme">Theme</string>
+    <string name="menu_settings">Settings</string>
+    <string name="menu_about">About</string>
+    <string name="menu_clear_exit">Clear and Exit</string>
+    <string name="theme_dialog_title">Select Theme</string>
+
+    <string name="nav_back">Back</string>
+    <string name="nav_forward">Forward</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_refresh">Refresh</string>
+    <string name="nav_menu">Menu</string>
+    <string name="tab_default_title">New Tab</string>
+
+    <string name="welcome_heading">Welcome!</string>
+    <string name="welcome_subtitle">A fast, privacy-focused, ad-free browsing experience.</string>
+    <string name="welcome_thanks">Thank you for choosing us!</string>
+    <string name="welcome_get_started">Get Started</string>
+    <string name="search_engine_desc">Search engine</string>
+    <string name="search_engine_badge_default">G</string>
+    <string name="search_engine_icon_desc">Search engine icon</string>
+    <string name="pref_support">Support Us! ❤️</string>
+</resources>

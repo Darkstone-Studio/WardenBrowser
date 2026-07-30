@@ -1,3 +1,16 @@
+/*
+ * Warden Browser
+ * Copyright (c) 2026 [Onur Karatas]
+ *
+ * Licensed under the PolyForm Noncommercial License 1.0.0.
+ * You may use, copy, modify, and distribute this software for
+ * NONCOMMERCIAL purposes only. Commercial use, including sale,
+ * resale, or paid distribution, is NOT permitted.
+ *
+ * Full license text: https://github.com/mazyLeyn/WardenBrowser/blob/main/LICENSE
+ * Or: https://polyformproject.org/licenses/noncommercial/1.0.0
+ */
+
 package com.wardenbrowser.app
 
 import android.content.Intent

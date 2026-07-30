@@ -1,4 +1,4 @@
-# Warden Browser
+# Warden Browser (Beta)
 
 Mozilla GeckoView tabanlı, sade ve performans odaklı bir Android web tarayıcısı.
 
@@ -72,6 +72,6 @@ Katkılar, hata bildirimleri ve öneriler memnuniyetle karşılanır.
 3. Değişikliklerinizi yapın.
 4. Pull Request gönderin.
 
-## Lisans
-
-Bu proje MIT Lisansı altında lisanslanmıştır.
+## License
+   This project is licensed under the [PolyForm Noncommercial License 1.0.0](LICENSE).
+   Commercial use (including selling, reselling, or monetized redistribution) is not permitted.

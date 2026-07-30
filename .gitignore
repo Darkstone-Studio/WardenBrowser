@@ -13,3 +13,11 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Signing / keystore - ASLA push etme
+*.jks
+*.keystore
+keystore.properties
+key.properties
+*.p12
+*.pem

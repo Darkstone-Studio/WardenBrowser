@@ -49,6 +49,11 @@
     <string name="history_clear_short">Temiz</string>
     <string name="history_clear_full">Geçmişi Temizle</string>
 
+    <string name="downloads_title">İndirilenler</string>
+    <string name="downloads_empty">Henüz indirilen dosya yok.</string>
+    <string name="downloads_clear_full">İndirilenleri Temizle</string>
+    <string name="downloads_clear_short">Temiz</string>
+
     <string name="tabs_title">Sekmeler</string>
     <string name="tabs_new_tab">Yeni Sekme</string>
 
@@ -57,6 +62,7 @@
 
     <string name="menu_bookmarks">Yer İmleri</string>
     <string name="menu_history">Geçmiş</string>
+    <string name="menu_downloads">İndirilenler</string>
     <string name="menu_theme">Tema</string>
     <string name="menu_settings">Ayarlar</string>
     <string name="menu_about">Hakkında</string>
@@ -78,4 +84,8 @@
     <string name="search_engine_badge_default">G</string>
     <string name="search_engine_icon_desc">Arama motoru ikonu</string>
     <string name="pref_support">Destek Ol! ❤️</string>
+    <string name="toast_download_started">İndiriliyor: %1$s</string>
+    <string name="toast_download_failed">İndirme başlatılamadı</string>
+    <string name="toast_download_permission_denied">İndirme için depolama izni gerekiyor</string>
+    <string name="toast_file_not_found">Dosya bulunamadı</string>
 </resources>

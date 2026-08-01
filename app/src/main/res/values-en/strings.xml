@@ -49,6 +49,11 @@
     <string name="history_clear_short">Clear</string>
     <string name="history_clear_full">Clear History</string>
 
+    <string name="downloads_title">Downloads</string>
+    <string name="downloads_empty">No downloaded files yet.</string>
+    <string name="downloads_clear_full">Clear Downloads</string>
+    <string name="downloads_clear_short">Clear</string>
+
     <string name="tabs_title">Tabs</string>
     <string name="tabs_new_tab">New Tab</string>
 
@@ -57,6 +62,7 @@
 
     <string name="menu_bookmarks">Bookmarks</string>
     <string name="menu_history">History</string>
+    <string name="menu_downloads">Downloads</string>
     <string name="menu_theme">Theme</string>
     <string name="menu_settings">Settings</string>
     <string name="menu_about">About</string>
@@ -78,4 +84,8 @@
     <string name="search_engine_badge_default">G</string>
     <string name="search_engine_icon_desc">Search engine icon</string>
     <string name="pref_support">Support Us! ❤️</string>
+    <string name="toast_download_started">Downloading: %1$s</string>
+    <string name="toast_download_failed">Failed to start download</string>
+    <string name="toast_download_permission_denied">Storage permission is required to download</string>
+    <string name="toast_file_not_found">File not found</string>
 </resources>

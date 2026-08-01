@@ -64,6 +64,17 @@ class MainActivity : AppCompatActivity() {
 
     private val tabManager get() = (application as WardenApp).tabManager
 
+    private var pendingDownloadResponse: org.mozilla.geckoview.WebResponse? = null
+
+    private val storagePermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        if (granted) {
+            pendingDownloadResponse?.let { startDownload(it) }
+        } else {
+            Toast.makeText(this, getString(R.string.toast_download_permission_denied), Toast.LENGTH_SHORT).show()
+        }
+        pendingDownloadResponse = null
+    }
+
     private val tabManagerLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == RESULT_OK) {
             val action = result.data?.getStringExtra("action")
@@ -342,6 +353,16 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
+
+            override fun onExternalResponse(session: GeckoSession, response: org.mozilla.geckoview.WebResponse) {
+                if (android.os.Build.VERSION.SDK_INT <= android.os.Build.VERSION_CODES.P &&
+                    androidx.core.content.ContextCompat.checkSelfPermission(this@MainActivity, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                    pendingDownloadResponse = response
+                    storagePermissionLauncher.launch(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                } else {
+                    startDownload(response)
+                }
+            }
         }
 
         target.scrollDelegate = object : GeckoSession.ScrollDelegate {
@@ -613,6 +634,7 @@ class MainActivity : AppCompatActivity() {
             when (menuItem.itemId) {
                 R.id.menu_bookmarks -> startActivity(Intent(this, BookmarksActivity::class.java))
                 R.id.menu_history -> startActivity(Intent(this, HistoryActivity::class.java))
+                R.id.menu_downloads -> startActivity(Intent(this, DownloadsActivity::class.java))
                 R.id.menu_theme -> showThemeSelector()
                 R.id.menu_settings -> startActivity(Intent(this, SettingsActivity::class.java))
                 R.id.menu_about -> startActivity(Intent(this, AboutActivity::class.java))
@@ -804,5 +826,36 @@ class MainActivity : AppCompatActivity() {
             true
         }
         popup.show()
+    }
+
+    private fun startDownload(response: org.mozilla.geckoview.WebResponse) {
+        val url = response.uri
+        val contentDisposition = response.headers["Content-Disposition"]
+        val mimeType = response.headers["Content-Type"] ?: "application/octet-stream"
+
+        val fileName = contentDisposition
+            ?.substringAfter("filename=", "")
+            ?.trim('"', ' ')
+            ?.ifBlank { null }
+            ?: android.webkit.URLUtil.guessFileName(url, contentDisposition, mimeType)
+
+        try {
+            val request = android.app.DownloadManager.Request(android.net.Uri.parse(url)).apply {
+                setTitle(fileName)
+                setMimeType(mimeType)
+                setNotificationVisibility(android.app.DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                setDestinationInExternalPublicDir(android.os.Environment.DIRECTORY_DOWNLOADS, fileName)
+                setAllowedOverMetered(true)
+            }
+            val downloadManager = getSystemService(android.content.Context.DOWNLOAD_SERVICE) as android.app.DownloadManager
+            downloadManager.enqueue(request)
+
+            val savedPath = "${android.os.Environment.DIRECTORY_DOWNLOADS}/$fileName"
+            DownloadsDbHelper.getInstance(this@MainActivity).addDownload(fileName, url, savedPath, mimeType)
+
+            Toast.makeText(this@MainActivity, getString(R.string.toast_download_started, fileName), Toast.LENGTH_SHORT).show()
+        } catch (e: Exception) {
+            Toast.makeText(this@MainActivity, getString(R.string.toast_download_failed), Toast.LENGTH_SHORT).show()
+        }
     }
 }

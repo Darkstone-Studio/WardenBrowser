@@ -4,15 +4,15 @@
     "type": "APK",
     "kind": "Directory"
   },
-  "applicationId": "com.example.mybrowser",
+  "applicationId": "com.wardenbrowser.app",
   "variantName": "release",
   "elements": [
     {
       "type": "SINGLE",
       "filters": [],
       "attributes": [],
-      "versionCode": 8,
-      "versionName": "1.3.7",
+      "versionCode": 25,
+      "versionName": "1.5.23",
       "outputFile": "app-release.apk"
     }
   ],

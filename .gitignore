@@ -21,3 +21,5 @@ keystore.properties
 key.properties
 *.p12
 *.pem
+*.apk
+app/release/

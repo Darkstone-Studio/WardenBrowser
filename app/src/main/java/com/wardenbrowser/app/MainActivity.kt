@@ -7,7 +7,7 @@
  * NONCOMMERCIAL purposes only. Commercial use, including sale,
  * resale, or paid distribution, is NOT permitted.
  *
- * Full license text: https://github.com/mazyLeyn/WardenBrowser/blob/main/LICENSE
+ * Full license text: https://github.com/Darkstone-Studio/WardenBrowser/blob/main/LICENSE
  * Or: https://polyformproject.org/licenses/noncommercial/1.0.0
  */
 

@@ -94,7 +94,7 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
 
         // GitHub Bağlantısı
         findPreference<Preference>("github")?.setOnPreferenceClickListener {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/mazyLeyn/WardenBrowser"))
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Darkstone-Studio/WardenBrowser"))
             startActivity(intent)
             true
         }

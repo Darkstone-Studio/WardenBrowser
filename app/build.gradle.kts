@@ -15,8 +15,8 @@ android {
         applicationId = "com.wardenbrowser.app"
         minSdk = 26
         targetSdk = 36
-        versionCode = 26
-        versionName = "1.6.23"
+        versionCode = 28
+        versionName = "1.6.25"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

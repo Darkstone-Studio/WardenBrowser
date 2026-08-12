@@ -21,7 +21,7 @@ motoru) kullanır.
 ### Android Studio ile
 
 ```bash
-git clone https://github.com/mazyLeyn/WardenBrowser.git
+git clone https://github.com/Darkstone-Studio/WardenBrowser.git
 ```
 
 Projeyi Android Studio'da açın, Gradle sync tamamlandıktan sonra çalıştırın.
@@ -35,7 +35,7 @@ gösterebilir — bu normaldir.
 
 ## İndir
 
-En son sürüm: [Download v1.6.23](https://github.com/mazyLeyn/WardenBrowser/releases/latest)
+En son sürüm: [Download v1.6.25](https://github.com/Darkstone-Studio/WardenBrowser/releases/latest)
 
 ## Kullanılan Teknolojiler
 
@@ -60,7 +60,7 @@ Proje aktif geliştirme aşamasında. Yer imleri henüz işlevsel değil, izleyi
 engelleme özelliği test edilip stabilite sorunları nedeniyle geri alındı.
 
 ## Güvenlik & Gizlilik
-[Gizlilik Politikası](https://mazyleyn.github.io/WardenBrowser/privacy-policy.html)
+[Gizlilik Politikası](https://darkstone-studio.github.io/WardenBrowser/privacy-policy.html)
 
 
 ## Katkıda Bulunma

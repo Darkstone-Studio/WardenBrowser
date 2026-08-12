@@ -35,7 +35,7 @@ class AboutActivity : AppCompatActivity() {
         val detailsText = StringBuilder()
             .append(getString(R.string.about_powered_by)).append("\n\n")
             .append(getString(R.string.about_developer)).append("\n")
-            .append("GitHub: https://github.com/mazyLeyn/WardenBrowser\n\n")
+            .append("GitHub: https://github.com/Darkstone-Studio/WardenBrowser\n\n")
             .append(getString(R.string.about_android_version, Build.VERSION.RELEASE, Build.VERSION.SDK_INT)).append("\n")
             .append(getString(R.string.about_build_number, BuildConfig.VERSION_CODE))
             .toString()
@@ -45,7 +45,7 @@ class AboutActivity : AppCompatActivity() {
         val privacyPolicyText = findViewById<TextView>(R.id.privacyPolicyText)
         privacyPolicyText.paintFlags = privacyPolicyText.paintFlags or Paint.UNDERLINE_TEXT_FLAG
         privacyPolicyText.setOnClickListener {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://mazyleyn.github.io/WardenBrowser/privacy-policy.html"))
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://darkstone-studio.github.io/WardenBrowser/privacy-policy.html"))
             startActivity(intent)
         }
     }

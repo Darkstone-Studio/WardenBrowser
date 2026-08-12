@@ -73,5 +73,5 @@ Katkılar, hata bildirimleri ve öneriler memnuniyetle karşılanır.
 4. Pull Request gönderin.
 
 ## License
-   This project is licensed under the [PolyForm Noncommercial License 1.0.0](LICENSE).
+   This project is licensed under the [PolyForm Noncommercial License 1.0.0](LICENSE.md).
    Commercial use (including selling, reselling, or monetized redistribution) is not permitted.

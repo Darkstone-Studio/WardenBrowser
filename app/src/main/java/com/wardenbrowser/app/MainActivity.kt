@@ -1,0 +1,973 @@
+/*
+ * Warden Browser
+ * Copyright (c) 2026 [Onur Karatas]
+ *
+ * Licensed under the PolyForm Noncommercial License 1.0.0.
+ * You may use, copy, modify, and distribute this software for
+ * NONCOMMERCIAL purposes only. Commercial use, including sale,
+ * resale, or paid distribution, is NOT permitted.
+ *
+ * Full license text: https://github.com/Darkstone-Studio/WardenBrowser/blob/main/LICENSE
+ * Or: https://polyformproject.org/licenses/noncommercial/1.0.0
+ */
+
+package com.wardenbrowser.app
+
+import android.animation.ArgbEvaluator
+import android.animation.ValueAnimator
+import android.content.Intent
+import android.graphics.drawable.ColorDrawable
+import android.os.Bundle
+import android.view.ContextThemeWrapper
+import android.view.View
+import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.animation.AccelerateInterpolator
+import android.view.animation.DecelerateInterpolator
+import android.view.inputmethod.EditorInfo
+import android.widget.EditText
+import android.widget.ImageButton
+import android.widget.ProgressBar
+import android.widget.RelativeLayout
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsAnimationCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.preference.PreferenceManager
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import org.mozilla.geckoview.GeckoResult
+import org.mozilla.geckoview.GeckoSession
+import org.mozilla.geckoview.GeckoSessionSettings
+import org.mozilla.geckoview.GeckoView
+import org.mozilla.geckoview.WebRequestError
+
+class MainActivity : AppCompatActivity() {
+
+    private lateinit var geckoView: GeckoView
+    private lateinit var session: GeckoSession
+    private lateinit var homepageContainer: RelativeLayout
+    private lateinit var browserContainer: SwipeRefreshLayout
+    private lateinit var progressBar: ProgressBar
+    private lateinit var appBarLayout: View
+    private lateinit var bottomNavigation: BottomNavigationView
+    private lateinit var toolbarSearchBar: EditText
+    private lateinit var homeSearchBar: EditText
+    private lateinit var btnTabs: android.widget.TextView
+    private lateinit var btnPrivateMode: ImageButton
+    private lateinit var speedDialRecyclerView: RecyclerView
+    private lateinit var glowView: View
+    private lateinit var addressBarContainer: View
+    private lateinit var homeSearchBarContainer: View
+    private lateinit var privateSafeText: android.widget.TextView
+
+    private val tabManager get() = (application as WardenApp).tabManager
+
+    private var pendingDownloadResponse: org.mozilla.geckoview.WebResponse? = null
+
+    private val storagePermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        if (granted) {
+            pendingDownloadResponse?.let { startDownload(it) }
+        } else {
+            Toast.makeText(this, getString(R.string.toast_download_permission_denied), Toast.LENGTH_SHORT).show()
+        }
+        pendingDownloadResponse = null
+    }
+
+    private val tabManagerLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            val action = result.data?.getStringExtra("action")
+            when (action) {
+                "switch" -> {
+                    val tabId = result.data?.getStringExtra("tab_id")
+                    val tab = tabManager.allTabs().find { it.id == tabId }
+                    if (tab != null) switchToTab(tab)
+                }
+                "new" -> {
+                    val newSession = createSession(isPrivateMode)
+                    val newTab = tabManager.addTab(newSession, isPrivateMode)
+                    switchToTab(newTab)
+                    showHomepage()
+                }
+            }
+        }
+    }
+
+    private lateinit var dbHelper: HistoryDbHelper
+    private var currentTitle: String? = null
+    private var isPrivateMode: Boolean = false
+    private var canGoBack: Boolean = false
+    private var canGoForward: Boolean = false
+    private var lastFailedUrl: String? = null
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putBoolean("isPrivateMode", isPrivateMode)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
+        super.onCreate(savedInstanceState)
+        
+        isPrivateMode = savedInstanceState?.getBoolean("isPrivateMode", false) ?: false
+        
+        dbHelper = HistoryDbHelper.getInstance(this)
+        applySavedTheme()
+        
+        setContentView(R.layout.activity_main)
+
+        initViews()
+        setupSystemBars()
+        applyPrivateModeUI()
+        if (tabManager.currentTab != null) {
+            reattachCurrentTab()
+        } else {
+            setupGeckoView()
+        }
+        refreshEngineBadge()
+        setupListeners()
+        setupSpeedDial()
+        setupKeyboardAnimation()
+        setupBackNavigation()
+        handleIntent(intent)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        handleIntent(intent)
+    }
+
+    private fun handleIntent(intent: Intent?) {
+        val url = intent?.getStringExtra("load_url")
+        if (!url.isNullOrEmpty()) {
+            performSearch(url)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Settings'den gelen değişiklikleri uygula
+        applySettings()
+        reconcileCurrentTab()
+    }
+
+    private fun reconcileCurrentTab() {
+        val current = tabManager.currentTab
+        when {
+            current == null -> {
+                // All tabs were closed — create a fresh one
+                val newSession = createSession(isPrivateMode)
+                val newTab = tabManager.addTab(newSession, isPrivateMode)
+                switchToTab(newTab)
+                showHomepage()
+            }
+            current.session != session -> {
+                // The tab we were viewing is gone (closed from Tab Manager) — follow TabManager's new current tab
+                switchToTab(current)
+            }
+            else -> {
+                // Still the same tab — just refresh the count in case tabs were closed/added elsewhere
+                btnTabs.text = tabManager.tabCount.toString()
+            }
+        }
+    }
+
+    private fun initViews() {
+        geckoView = findViewById(R.id.geckoview)
+        progressBar = findViewById(R.id.progressBar)
+        appBarLayout = findViewById(R.id.appBarLayout)
+        homepageContainer = findViewById(R.id.homepageContainer)
+        browserContainer = findViewById(R.id.browserContainer)
+        homeSearchBar = findViewById(R.id.homeSearchBar)
+        toolbarSearchBar = findViewById(R.id.toolbarSearchBar)
+        bottomNavigation = findViewById(R.id.bottomNavigation)
+        
+        // Material 3 seçili öğe vurgusunu (oval arkaplan) kaldır
+        bottomNavigation.isItemActiveIndicatorEnabled = false
+        
+        btnTabs = findViewById(R.id.btnTabs)
+        btnPrivateMode = findViewById(R.id.btnPrivateMode)
+        speedDialRecyclerView = findViewById(R.id.speedDialRecyclerView)
+        glowView = findViewById(R.id.glowView)
+        addressBarContainer = findViewById(R.id.addressBarContainer)
+        homeSearchBarContainer = findViewById(R.id.homeSearchBarContainer)
+        privateSafeText = findViewById(R.id.privateSafeText)
+    }
+
+    private fun applySavedTheme() {
+        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        val theme = prefs.getString("theme", "dark")
+        applyTheme(theme)
+    }
+
+    private fun applySettings(targetSession: GeckoSession? = null) {
+        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        val s = targetSession ?: session
+        
+        // JavaScript Ayarı
+        s.settings.allowJavascript = prefs.getBoolean("javascript_enabled", true)
+        
+        // Masaüstü Modu Ayarı
+        val isDesktopMode = prefs.getBoolean("desktop_mode", false)
+        s.settings.userAgentMode = if (isDesktopMode) {
+            GeckoSessionSettings.USER_AGENT_MODE_DESKTOP
+        } else {
+            GeckoSessionSettings.USER_AGENT_MODE_MOBILE
+        }
+    }
+
+    private fun recreateGeckoSession(showToast: Boolean = true) {
+        try {
+            session.close()
+        } catch (e: Exception) {
+            // Oturum zaten kapalı olabilir
+        }
+        setupGeckoView()
+        showHomepage()
+        if (showToast) {
+            Toast.makeText(this, getString(R.string.toast_engine_refreshed), Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun recreateTabSession(tab: BrowserTab, showToast: Boolean) {
+        val wasCurrent = tabManager.currentTab?.id == tab.id
+        tabManager.closeTab(tab.id)
+        val newSession = createSession(tab.isPrivate)
+        val newTab = tabManager.addTab(newSession, tab.isPrivate)
+
+        newTab.url = tab.url
+        newTab.title = tab.title
+        if (tab.url.isNotBlank() && tab.url != "about:blank") {
+            newSession.loadUri(tab.url)
+        }
+
+        if (wasCurrent) {
+            switchToTab(newTab)
+        }
+        if (showToast) {
+            Toast.makeText(this, getString(R.string.toast_engine_refreshed), Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun setupGeckoView() {
+        session = createSession(isPrivateMode)
+
+        if (tabManager.currentTab != null) {
+            tabManager.closeTab(tabManager.currentTab!!.id)
+        }
+        tabManager.addTab(session, isPrivateMode)
+        btnTabs.text = tabManager.tabCount.toString()
+
+        geckoView.setSession(session)
+    }
+
+    private fun reattachCurrentTab() {
+        val tab = tabManager.currentTab ?: return
+        session = tab.session
+        attachDelegates(session)
+        
+        geckoView.setSession(session)
+        isPrivateMode = tab.isPrivate
+        applyPrivateModeUI()
+        
+        toolbarSearchBar.setText(tab.url)
+        btnTabs.text = tabManager.tabCount.toString()
+        
+        if (tab.url.isNotBlank() && tab.url != "about:blank") {
+            showBrowserView()
+        } else {
+            showHomepage()
+        }
+    }
+
+    private fun createSession(isPrivate: Boolean): GeckoSession {
+        val settings = GeckoSessionSettings.Builder()
+            .usePrivateMode(isPrivate)
+            .build()
+        val newSession = GeckoSession(settings)
+        val runtime = (application as WardenApp).geckoRuntime
+        
+        applySettings(newSession)
+        newSession.open(runtime)
+        attachDelegates(newSession)
+        return newSession
+    }
+
+    private fun attachDelegates(target: GeckoSession) {
+        target.navigationDelegate = object : GeckoSession.NavigationDelegate {
+            override fun onLoadError(session: GeckoSession, uri: String?, error: WebRequestError): GeckoResult<String>? {
+                // Yenileme butonuna basıldıysa asıl sayfayı tekrar yükle
+                if (uri?.contains("warden.retry") == true) {
+                    runOnUiThread {
+                        lastFailedUrl?.let { session.loadUri(it) }
+                    }
+                    return GeckoResult.fromValue("") 
+                }
+
+                android.util.Log.d("GeckoError", "Category: ${error.category}, Code: ${error.code}, URI: $uri")
+                
+                return try {
+                    if (error.category == WebRequestError.ERROR_CATEGORY_NETWORK || 
+                        error.category == WebRequestError.ERROR_CATEGORY_UNKNOWN ||
+                        error.code == 37) {
+                        
+                        if (uri != null && !uri.startsWith("data:")) {
+                            lastFailedUrl = uri
+                        }
+                        
+                        GeckoResult.fromValue(loadOfflineErrorPage())
+                    } else {
+                        Toast.makeText(this@MainActivity, getString(R.string.toast_load_error, error.code.toString()), Toast.LENGTH_SHORT).show()
+                        null
+                    }
+                } catch (e: Exception) {
+                    android.util.Log.e("GeckoError", "Error loading custom page", e)
+                    null
+                }
+            }
+
+            override fun onCanGoBack(session: GeckoSession, canGoBack: Boolean) {
+                this@MainActivity.canGoBack = canGoBack
+            }
+
+            override fun onCanGoForward(session: GeckoSession, canGoForward: Boolean) {
+                this@MainActivity.canGoForward = canGoForward
+            }
+
+            override fun onLocationChange(session: GeckoSession, url: String?, permissions: MutableList<GeckoSession.PermissionDelegate.ContentPermission>, hasUserGesture: Boolean) {
+                url?.let {
+                    if (it != "about:blank") {
+                        toolbarSearchBar.setText(it)
+                        if (!isPrivateMode) {
+                            dbHelper.addHistory(currentTitle ?: it, it)
+                        }
+                    }
+                }
+                url?.let {
+                    tabManager.allTabs().find { t -> t.session == target }?.url = it
+                }
+            }
+        }
+
+        target.contentDelegate = object : GeckoSession.ContentDelegate {
+            override fun onTitleChange(session: GeckoSession, title: String?) {
+                currentTitle = title
+                title?.let {
+                    tabManager.allTabs().find { t -> t.session == target }?.title = it
+                }
+            }
+
+            override fun onCrash(session: GeckoSession) {
+                val crashedTab = tabManager.allTabs().find { it.session == target }
+                if (crashedTab != null) {
+                    val isVisible = tabManager.currentTab?.id == crashedTab.id
+                    if (isVisible) {
+                        recreateTabSession(crashedTab, true)
+                    } else {
+                        crashedTab.needsReload = true
+                    }
+                }
+            }
+
+            override fun onKill(session: GeckoSession) {
+                val crashedTab = tabManager.allTabs().find { it.session == target }
+                if (crashedTab != null) {
+                    val isVisible = tabManager.currentTab?.id == crashedTab.id
+                    if (isVisible) {
+                        recreateTabSession(crashedTab, true)
+                    } else {
+                        crashedTab.needsReload = true
+                    }
+                }
+            }
+
+            override fun onExternalResponse(session: GeckoSession, response: org.mozilla.geckoview.WebResponse) {
+                if (android.os.Build.VERSION.SDK_INT <= android.os.Build.VERSION_CODES.P &&
+                    androidx.core.content.ContextCompat.checkSelfPermission(this@MainActivity, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                    pendingDownloadResponse = response
+                    storagePermissionLauncher.launch(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                } else {
+                    startDownload(response)
+                }
+            }
+        }
+
+        target.scrollDelegate = object : GeckoSession.ScrollDelegate {
+            override fun onScrollChanged(session: GeckoSession, scrollX: Int, scrollY: Int) {
+                browserContainer.isEnabled = (scrollY <= 0)
+            }
+        }
+
+        target.progressDelegate = object : GeckoSession.ProgressDelegate {
+            override fun onProgressChange(session: GeckoSession, progress: Int) {
+                progressBar.progress = progress
+                progressBar.visibility = if (progress < 100) View.VISIBLE else View.GONE
+            }
+        }
+    }
+
+    private fun switchToTab(tab: BrowserTab) {
+        if (tab.needsReload) {
+            tab.needsReload = false
+            recreateTabSession(tab, false)
+            return
+        }
+        
+        session = tab.session
+        attachDelegates(session)
+        isPrivateMode = tab.isPrivate
+        applyPrivateModeUI()
+        
+        geckoView.setSession(session)
+        tabManager.switchTo(tab.id)
+        toolbarSearchBar.setText(tab.url)
+        btnTabs.text = tabManager.tabCount.toString()
+
+        if (tab.url.isNotBlank() && tab.url != "about:blank") {
+            showBrowserView()
+        } else {
+            showHomepage()
+        }
+    }
+
+    private fun setupListeners() {
+        browserContainer.setOnRefreshListener {
+            session.reload()
+            browserContainer.isRefreshing = false
+        }
+
+        homeSearchBar.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                performSearch(homeSearchBar.text.toString())
+                true
+            } else false
+        }
+
+        toolbarSearchBar.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                performSearch(toolbarSearchBar.text.toString())
+                true
+            } else false
+        }
+
+        toolbarSearchBar.setOnFocusChangeListener { _, hasFocus ->
+            animateSearchBarFocus(addressBarContainer, hasFocus)
+        }
+
+        homeSearchBar.setOnFocusChangeListener { _, hasFocus ->
+            animateSearchBarFocus(homeSearchBarContainer, hasFocus)
+        }
+
+        bottomNavigation.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_back -> if (canGoBack) session.goBack()
+                R.id.nav_forward -> if (canGoForward) session.goForward()
+                R.id.nav_home -> showHomepage()
+                R.id.nav_refresh -> session.reload()
+                R.id.nav_menu -> showOverflowMenu()
+            }
+            false
+        }
+
+        val toolbar = findViewById<com.google.android.material.appbar.MaterialToolbar>(R.id.toolbar)
+        toolbar.setNavigationOnClickListener {
+            if (browserContainer.visibility == View.VISIBLE) {
+                showHomepage()
+            }
+        }
+
+        btnPrivateMode.setOnClickListener {
+            togglePrivateMode()
+        }
+
+        findViewById<View>(R.id.btnSearchEngineSelector).setOnClickListener {
+            showEngineSelectorMenu(it)
+        }
+
+        btnTabs.setOnClickListener {
+            tabManagerLauncher.launch(Intent(this, TabManagerActivity::class.java))
+        }
+    }
+
+    private fun loadOfflineErrorPage(): String {
+        val html = assets.open("error_offline.html").bufferedReader().use { it.readText() }
+        val base64 = android.util.Base64.encodeToString(html.toByteArray(Charsets.UTF_8), android.util.Base64.NO_WRAP)
+        return "data:text/html;charset=utf-8;base64,$base64"
+    }
+
+    private fun togglePrivateMode() {
+        val targetPrivate = !isPrivateMode
+
+        val newSession = createSession(targetPrivate)
+        val newTab = tabManager.addTab(newSession, targetPrivate)
+        switchToTab(newTab)
+        showHomepage()
+
+        if (targetPrivate) {
+            Toast.makeText(this, getString(R.string.toast_private_mode_on), Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(this, getString(R.string.toast_private_mode_off), Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun animateBackgroundColor(view: View, toColor: Int) {
+        val fromColor = if (view.background is ColorDrawable) {
+            (view.background as ColorDrawable).color
+        } else {
+            ContextCompat.getColor(this, R.color.app_background)
+        }
+        val colorAnimation = ValueAnimator.ofObject(ArgbEvaluator(), fromColor, toColor)
+        colorAnimation.duration = 600
+        colorAnimation.interpolator = AccelerateDecelerateInterpolator()
+        colorAnimation.addUpdateListener { animator ->
+            view.setBackgroundColor(animator.animatedValue as Int)
+        }
+        colorAnimation.start()
+    }
+
+    private fun animateSearchBarFocus(container: View, hasFocus: Boolean) {
+        val targetScale = if (hasFocus) 1.03f else 1f
+        val targetElevation = if (hasFocus) 8f else 0f
+        
+        container.animate()
+            .scaleX(targetScale)
+            .scaleY(targetScale)
+            .setDuration(200)
+            .setInterpolator(android.view.animation.AccelerateDecelerateInterpolator())
+            .start()
+        
+        container.animate()
+            .translationZ(targetElevation)
+            .setDuration(200)
+            .start()
+    }
+
+    private fun applyPrivateModeUI() {
+        val isNightMode = (resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK) == android.content.res.Configuration.UI_MODE_NIGHT_YES
+
+        val accentColor = if (isPrivateMode) {
+            androidx.core.content.ContextCompat.getColor(this, R.color.private_mode_accent)
+        } else {
+            androidx.core.content.ContextCompat.getColor(this, R.color.accent_blue)
+        }
+        
+        val bgColor = if (isPrivateMode) {
+            androidx.core.content.ContextCompat.getColor(this, R.color.private_mode_bg)
+        } else {
+            androidx.core.content.ContextCompat.getColor(this, R.color.app_background)
+        }
+
+        val surfaceColor = if (isPrivateMode) {
+            androidx.core.content.ContextCompat.getColor(this, R.color.private_mode_surface)
+        } else {
+            androidx.core.content.ContextCompat.getColor(this, R.color.surface_color)
+        }
+
+        val iconGrayColor = androidx.core.content.ContextCompat.getColor(this, R.color.icon_gray)
+
+        // Status Bar ve Nav Bar İkon Rengi Yönetimi
+        val windowInsetsController = WindowCompat.getInsetsController(window, window.decorView)
+        if (isPrivateMode) {
+            windowInsetsController.isAppearanceLightStatusBars = false
+            windowInsetsController.isAppearanceLightNavigationBars = false
+        } else {
+            windowInsetsController.isAppearanceLightStatusBars = !isNightMode
+            windowInsetsController.isAppearanceLightNavigationBars = !isNightMode
+        }
+
+        // Renkleri Belirle
+        val finalIconColor = if (isPrivateMode) {
+            androidx.core.content.ContextCompat.getColor(this, R.color.white)
+        } else {
+            iconGrayColor
+        }
+        
+        val finalTextColor = if (isPrivateMode) {
+            androidx.core.content.ContextCompat.getColor(this, R.color.white)
+        } else {
+            androidx.core.content.ContextCompat.getColor(this, R.color.text_primary)
+        }
+
+        // Arka Planları Uygula
+        animateBackgroundColor(appBarLayout, bgColor)
+        animateBackgroundColor(homepageContainer, bgColor)
+        
+        // Arama çubuğu arka planlarını optimize et
+        addressBarContainer.backgroundTintList = android.content.res.ColorStateList.valueOf(surfaceColor)
+        homeSearchBarContainer.backgroundTintList = android.content.res.ColorStateList.valueOf(surfaceColor)
+        
+        // Glow efekti
+        glowView.animate().alpha(0f).setDuration(200).withEndAction {
+            glowView.setBackgroundResource(if (isPrivateMode) R.drawable.bg_glow_purple else R.drawable.bg_glow_yellow)
+            glowView.animate().alpha(1f).setDuration(200).start()
+        }.start()
+
+        // Bottom Navigation renklerini ayarla
+        val navTextColorStateList = android.content.res.ColorStateList.valueOf(accentColor)
+        bottomNavigation.itemIconTintList = navTextColorStateList
+        bottomNavigation.itemTextColor = navTextColorStateList
+        animateBackgroundColor(bottomNavigation, bgColor)
+
+        // İkon ve Metin Renklerini Uygula
+        val tabsColor = if (isPrivateMode) accentColor else finalIconColor
+        val tabsColorStateList = android.content.res.ColorStateList.valueOf(tabsColor)
+        
+        btnTabs.backgroundTintList = tabsColorStateList
+        btnTabs.setTextColor(tabsColor)
+        findViewById<com.google.android.material.appbar.MaterialToolbar>(R.id.toolbar).setNavigationIconTint(finalIconColor)
+        
+        toolbarSearchBar.setTextColor(finalTextColor)
+        toolbarSearchBar.setHintTextColor(if (isPrivateMode) 0x80FFFFFF.toInt() else androidx.core.content.ContextCompat.getColor(this, R.color.text_secondary))
+        homeSearchBar.setTextColor(finalTextColor)
+        homeSearchBar.setHintTextColor(if (isPrivateMode) 0x80FFFFFF.toInt() else androidx.core.content.ContextCompat.getColor(this, R.color.text_secondary))
+        
+        // Private Mode butonu görseli
+        btnPrivateMode.imageTintList = android.content.res.ColorStateList.valueOf(
+            if (isPrivateMode) accentColor else finalIconColor
+        )
+        
+        // Logo/Marka renkleri
+        findViewById<android.widget.TextView>(R.id.brandPart1).setTextColor(accentColor)
+        findViewById<android.widget.TextView>(R.id.brandPart2).setTextColor(accentColor)
+        findViewById<android.widget.TextView>(R.id.betaBadge).setTextColor(accentColor)
+        
+        // Private Mode Safe Text
+        privateSafeText.setTextColor(accentColor)
+
+        if (isPrivateMode) {
+            privateSafeText.visibility = View.VISIBLE
+            privateSafeText.alpha = 0f
+            privateSafeText.translationY = 20f
+            privateSafeText.animate()
+                .alpha(1f)
+                .translationY(0f)
+                .setDuration(450)
+                .setStartDelay(150)
+                .setInterpolator(DecelerateInterpolator())
+                .start()
+        } else {
+            privateSafeText.animate()
+                .alpha(0f)
+                .translationY(20f)
+                .setDuration(250)
+                .setInterpolator(AccelerateInterpolator())
+                .withEndAction {
+                    privateSafeText.visibility = View.GONE
+                }
+                .start()
+        }
+        
+        // Progress bar rengi
+        progressBar.progressTintList = android.content.res.ColorStateList.valueOf(accentColor)
+
+        // Speed Dial Adapter'ı güncelle
+        if (speedDialRecyclerView.adapter is SpeedDialAdapter) {
+            (speedDialRecyclerView.adapter as SpeedDialAdapter).updatePrivateMode(isPrivateMode)
+        }
+    }
+
+    private fun performSearch(query: String) {
+        val trimmedQuery = query.trim()
+        if (trimmedQuery.isNotEmpty()) {
+            val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+            val engine = prefs.getString("search_engine", "google")
+            val searchUrl = when (engine) {
+                "duckduckgo" -> "https://duckduckgo.com/?q="
+                "brave" -> "https://search.brave.com/search?q="
+                "bing" -> "https://www.bing.com/search?q="
+                else -> "https://www.google.com/search?q="
+            }
+
+            val url = if (trimmedQuery.contains(".") && !trimmedQuery.contains(" ")) {
+                if (trimmedQuery.startsWith("http")) trimmedQuery else "https://$trimmedQuery"
+            } else {
+                "$searchUrl$trimmedQuery&pws=0&gl=tr&gws_rd=cr"
+            }
+            
+            showBrowserView()
+            
+            session.loadUri(url)
+            currentFocus?.let { 
+                WindowCompat.getInsetsController(window, it).hide(WindowInsetsCompat.Type.ime())
+            }
+            homeSearchBar.clearFocus()
+            toolbarSearchBar.clearFocus()
+        }
+    }
+
+    private fun showBrowserView() {
+        homepageContainer.visibility = View.GONE
+        browserContainer.visibility = View.VISIBLE
+        findViewById<com.google.android.material.appbar.MaterialToolbar>(R.id.toolbar)
+            .setNavigationIcon(R.drawable.ic_back)
+    }
+
+    private fun showHomepage() {
+        browserContainer.visibility = View.GONE
+        homepageContainer.visibility = View.VISIBLE
+        toolbarSearchBar.text.clear()
+        
+        // Geri ikonunu gizle
+        findViewById<com.google.android.material.appbar.MaterialToolbar>(R.id.toolbar).navigationIcon = null
+        
+        session.loadUri("about:blank")
+    }
+
+    private fun showOverflowMenu() {
+        val view = findViewById<View>(R.id.nav_menu)
+        val popup = androidx.appcompat.widget.PopupMenu(
+            ContextThemeWrapper(this, R.style.PopupMenuOverlay),
+            view
+        )
+        popup.menuInflater.inflate(R.menu.overflow_menu, popup.menu)
+        
+        // Force icons to show
+        try {
+            val fields = popup.javaClass.getDeclaredField("mPopup")
+            fields.isAccessible = true
+            val menuPopupHelper = fields.get(popup)
+            menuPopupHelper?.javaClass
+                ?.getMethod("setForceShowIcon", Boolean::class.javaPrimitiveType)
+                ?.invoke(menuPopupHelper, true)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+        popup.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.menu_bookmarks -> startActivity(Intent(this, BookmarksActivity::class.java))
+                R.id.menu_history -> startActivity(Intent(this, HistoryActivity::class.java))
+                R.id.menu_downloads -> startActivity(Intent(this, DownloadsActivity::class.java))
+                R.id.menu_theme -> showThemeSelector()
+                R.id.menu_settings -> startActivity(Intent(this, SettingsActivity::class.java))
+                R.id.menu_about -> startActivity(Intent(this, AboutActivity::class.java))
+                R.id.menu_clear_exit -> {
+                    dbHelper.clearHistory()
+                    Toast.makeText(this, getString(R.string.toast_history_cleared_exiting), Toast.LENGTH_SHORT).show()
+                    finishAffinity()
+                }
+            }
+            true
+        }
+        popup.show()
+    }
+
+    private fun showThemeSelector() {
+        val themes = resources.getStringArray(R.array.theme_entries)
+        val themeValues = resources.getStringArray(R.array.theme_values)
+        
+        MaterialAlertDialogBuilder(this)
+            .setTitle(getString(R.string.theme_dialog_title))
+            .setItems(themes) { _, which ->
+                val selectedTheme = themeValues[which]
+                PreferenceManager.getDefaultSharedPreferences(this).edit()
+                    .putString("theme", selectedTheme)
+                    .apply()
+                applyTheme(selectedTheme)
+            }
+            .show()
+    }
+
+    private fun applyTheme(theme: String?) {
+        when (theme) {
+            "light" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            "dark" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            else -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+        }
+    }
+
+    private fun setupSpeedDial() {
+        val items = listOf(
+            SpeedDialItem("Google", "https://www.google.com"),
+            SpeedDialItem("YouTube", "https://www.youtube.com"),
+            SpeedDialItem("GitHub", "https://www.github.com"),
+            SpeedDialItem("Wikipedia", "https://www.wikipedia.org"),
+            SpeedDialItem("Reddit", "https://www.reddit.com")
+        )
+        
+        speedDialRecyclerView.layoutManager = GridLayoutManager(this, 4)
+        speedDialRecyclerView.adapter = SpeedDialAdapter(items, isPrivateMode) { item ->
+            performSearch(item.url)
+        }
+    }
+
+    private fun setupKeyboardAnimation() {
+        val centralLayout = findViewById<View>(R.id.centralLayout)
+        ViewCompat.setWindowInsetsAnimationCallback(
+            window.decorView,
+            object : WindowInsetsAnimationCompat.Callback(DISPATCH_MODE_STOP) {
+                override fun onProgress(
+                    insets: WindowInsetsCompat,
+                    runningAnimations: MutableList<WindowInsetsAnimationCompat>
+                ): WindowInsetsCompat {
+                    val imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime())
+                    val systemBarsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+                    val diff = (imeInsets.bottom - systemBarsInsets.bottom).coerceAtLeast(0)
+                    
+                    if (homepageContainer.visibility == View.VISIBLE) {
+                        centralLayout.translationY = -diff.toFloat() / 2f
+                    }
+                    return insets
+                }
+            }
+        )
+    }
+
+    private fun setupBackNavigation() {
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (browserContainer.visibility == View.VISIBLE) {
+                    if (canGoBack) {
+                        session.goBack()
+                    } else {
+                        showHomepage()
+                    }
+                } else {
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()
+                }
+            }
+        })
+    }
+
+    private fun setupSystemBars() {
+        ViewCompat.setOnApplyWindowInsetsListener(appBarLayout) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(0, systemBars.top, 0, 0)
+            insets
+        }
+        ViewCompat.setOnApplyWindowInsetsListener(bottomNavigation) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(0, 0, 0, systemBars.bottom)
+            insets
+        }
+    }
+
+    private fun engineFaviconUrl(engineKey: String): String {
+        if (engineKey == "bing") {
+            return "https://www.bing.com/favicon.ico"
+        }
+        val domain = when (engineKey) {
+            "google" -> "google.com"
+            "duckduckgo" -> "duckduckgo.com"
+            "brave" -> "brave.com"
+            else -> "google.com"
+        }
+        return "https://www.google.com/s2/favicons?domain=$domain&sz=128"
+    }
+
+    private fun engineFallbackLetter(engineKey: String): Pair<String, Int> = when (engineKey) {
+        "google" -> "G" to android.graphics.Color.parseColor("#4285F4")
+        "duckduckgo" -> "D" to android.graphics.Color.parseColor("#DE5833")
+        "bing" -> "B" to android.graphics.Color.parseColor("#008373")
+        "brave" -> "Br" to android.graphics.Color.parseColor("#FB542B")
+        else -> "G" to android.graphics.Color.parseColor("#4285F4")
+    }
+
+    private fun refreshEngineBadge() {
+        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        val engine = prefs.getString("search_engine", "google") ?: "google"
+        val badge = findViewById<android.widget.ImageView>(R.id.searchEngineBadge)
+
+        com.bumptech.glide.Glide.with(this)
+            .load(engineFaviconUrl(engine))
+            .override(64, 64)
+            .circleCrop()
+            .listener(object : com.bumptech.glide.request.RequestListener<android.graphics.drawable.Drawable> {
+                override fun onLoadFailed(
+                    e: com.bumptech.glide.load.engine.GlideException?,
+                    model: Any?,
+                    target: com.bumptech.glide.request.target.Target<android.graphics.drawable.Drawable>,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    applyLetterBadge(engine, badge)
+                    return true
+                }
+
+                override fun onResourceReady(
+                    resource: android.graphics.drawable.Drawable,
+                    model: Any,
+                    target: com.bumptech.glide.request.target.Target<android.graphics.drawable.Drawable>?,
+                    dataSource: com.bumptech.glide.load.DataSource,
+                    isFirstResource: Boolean
+                ): Boolean = false
+            })
+            .into(badge)
+    }
+
+    private fun applyLetterBadge(engine: String, badge: android.widget.ImageView) {
+        val (letter, color) = engineFallbackLetter(engine)
+        val size = 96
+        val bmp = android.graphics.Bitmap.createBitmap(size, size, android.graphics.Bitmap.Config.ARGB_8888)
+        val canvas = android.graphics.Canvas(bmp)
+        val paint = android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG).apply { this.color = color }
+        canvas.drawCircle(size / 2f, size / 2f, size / 2f, paint)
+        val textPaint = android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG).apply {
+            this.color = android.graphics.Color.WHITE
+            textSize = size * 0.45f
+            textAlign = android.graphics.Paint.Align.CENTER
+            isFakeBoldText = true
+        }
+        val yPos = size / 2f - (textPaint.descent() + textPaint.ascent()) / 2f
+        canvas.drawText(letter, size / 2f, yPos, textPaint)
+        badge.setImageDrawable(android.graphics.drawable.BitmapDrawable(resources, bmp))
+    }
+
+    private fun showEngineSelectorMenu(anchor: View) {
+        val popup = androidx.appcompat.widget.PopupMenu(this, anchor)
+        val entries = resources.getStringArray(R.array.search_engine_entries)
+        popup.menu.add(0, 1, 0, entries[0])
+        popup.menu.add(0, 2, 1, entries[1])
+        popup.menu.add(0, 3, 2, entries[2])
+        popup.menu.add(0, 4, 3, entries[3])
+        popup.setOnMenuItemClickListener { item ->
+            val newEngine = when (item.itemId) {
+                1 -> "google"; 2 -> "duckduckgo"; 3 -> "bing"; 4 -> "brave"; else -> "google"
+            }
+            PreferenceManager.getDefaultSharedPreferences(this).edit().putString("search_engine", newEngine).apply()
+            refreshEngineBadge()
+            true
+        }
+        popup.show()
+    }
+
+    private fun startDownload(response: org.mozilla.geckoview.WebResponse) {
+        val url = response.uri
+        val contentDisposition = response.headers["Content-Disposition"]
+        val mimeType = response.headers["Content-Type"] ?: "application/octet-stream"
+
+        val fileName = contentDisposition
+            ?.substringAfter("filename=", "")
+            ?.trim('"', ' ')
+            ?.ifBlank { null }
+            ?: android.webkit.URLUtil.guessFileName(url, contentDisposition, mimeType)
+
+        try {
+            val request = android.app.DownloadManager.Request(android.net.Uri.parse(url)).apply {
+                setTitle(fileName)
+                setMimeType(mimeType)
+                setNotificationVisibility(android.app.DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                setDestinationInExternalPublicDir(android.os.Environment.DIRECTORY_DOWNLOADS, fileName)
+                setAllowedOverMetered(true)
+            }
+            val downloadManager = getSystemService(android.content.Context.DOWNLOAD_SERVICE) as android.app.DownloadManager
+            downloadManager.enqueue(request)
+
+            val savedPath = "${android.os.Environment.DIRECTORY_DOWNLOADS}/$fileName"
+            DownloadsDbHelper.getInstance(this@MainActivity).addDownload(fileName, url, savedPath, mimeType)
+
+            Toast.makeText(this@MainActivity, getString(R.string.toast_download_started, fileName), Toast.LENGTH_SHORT).show()
+        } catch (e: Exception) {
+            Toast.makeText(this@MainActivity, getString(R.string.toast_download_failed), Toast.LENGTH_SHORT).show()
+        }
+    }
+}

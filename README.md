@@ -35,8 +35,10 @@ gösterebilir — bu normaldir.
 
 ## İndir
 
-Şuan için indirilebilir en son sürüm: [Download v1.6.23](https://github.com/Darkstone-Studio/WardenBrowser/releases/latest)
-En son sürüm:**v1.7.0**
+İndirilebilir en son sürüm: [Download v1.6.23](https://github.com/Darkstone-Studio/WardenBrowser/releases/latest)
+
+En son sürüm: **v1.7.0**
+
 ## Kullanılan Teknolojiler
 
 ![Kotlin](https://img.shields.io/badge/Kotlin-Native-7F52FF?style=flat-square&logo=kotlin&logoColor=white)

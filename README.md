@@ -66,7 +66,7 @@ En son sürüm: **v1.7.0**
 
 - [x] Gezinme geçmişi
 - [x] Gizli sekme modu
-- [ ] Yer imleri
+- [ ] Yer imleri (henüz kararlı değil)
 - [ ] İzleyici/reklam engelleme (geliştirme aşamasında, henüz kararlı değil)
 - [x] Çoklu sekme desteği
 - [ ] İndirme yöneticisi (geliştirme aşamasında, henüz kararlı değil)

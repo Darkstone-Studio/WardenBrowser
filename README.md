@@ -33,7 +33,16 @@ Derlenmiş APK dosyaları **Releases** bölümünden indirilebilir. Play Store v
 Galaxy Store dışından kurulum yaptığınız için cihazınız "bilinmeyen kaynak" uyarısı
 gösterebilir — bu normaldir.
 
-## İndir
+### Google Play Store (Beta)
+
+Warden Browser şu an Google Play Store'da açık beta aşamasındadır. Uygulamayı doğrudan Play Store üzerinden indirip test edebilirsiniz:
+
+[![Get it on Google Play](https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png)](https://play.google.com/store/apps/details?id=com.wardenbrowser.app)
+
+---
+
+
+## İndir APK 
 
 İndirilebilir en son sürüm: [Download v1.6.23](https://github.com/Darkstone-Studio/WardenBrowser/releases/latest)
 

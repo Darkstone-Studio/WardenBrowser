@@ -27,11 +27,6 @@ git clone https://github.com/Darkstone-Studio/WardenBrowser.git
 Projeyi Android Studio'da açın, Gradle sync tamamlandıktan sonra çalıştırın.
 Minimum SDK 26 (Android 8.0) gerektirir.
 
-### APK
-
-Derlenmiş APK dosyaları **Releases** bölümünden indirilebilir. Play Store veya
-Galaxy Store dışından kurulum yaptığınız için cihazınız "bilinmeyen kaynak" uyarısı
-gösterebilir — bu normaldir.
 
 ### Google Play Store (Beta)
 
@@ -41,6 +36,11 @@ Warden Browser şu an Google Play Store'da açık beta aşamasındadır. Uygulam
 
 ---
 
+### APK
+
+Derlenmiş APK dosyaları **Releases** bölümünden indirilebilir. Play Store veya
+Galaxy Store dışından kurulum yaptığınız için cihazınız "bilinmeyen kaynak" uyarısı
+gösterebilir — bu normaldir.
 
 ## İndir APK 
 

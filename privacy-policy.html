@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Warden Browser — Gizlilik Politikası</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0c0910;
+    --ink: #efeaf7;
+    --ink-dim: #928aa3;
+    --line: #251f2c;
+    --accent: #b39ddb;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Inter", -apple-system, "Segoe UI", Roboto, sans-serif;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    -webkit-font-smoothing: antialiased;
+  }
+  .page {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 80px 28px 100px;
+  }
+  .kicker {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 20px;
+  }
+  h1 {
+    font-size: 44px;
+    font-weight: 900;
+    line-height: 1.08;
+    margin: 0 0 10px;
+    color: var(--ink);
+    letter-spacing: -0.03em;
+  }
+  .meta {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-dim);
+    margin-bottom: 48px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--line);
+  }
+  .lede {
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1.6;
+    color: var(--ink);
+    margin-bottom: 56px;
+    letter-spacing: -0.01em;
+  }
+  .lede em {
+    font-style: normal;
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .entry { margin-bottom: 44px; }
+  .entry .num {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ink-dim);
+    letter-spacing: 0.05em;
+    display: block;
+    margin-bottom: 8px;
+  }
+  h2 {
+    font-size: 20px;
+    font-weight: 800;
+    margin: 0 0 12px;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  p {
+    font-size: 15.5px;
+    font-weight: 400;
+    line-height: 1.7;
+    color: var(--ink-dim);
+    margin: 0 0 12px;
+  }
+  p strong { color: var(--ink); font-weight: 700; }
+  .list {
+    margin: 16px 0 0;
+    padding: 0;
+    font-size: 15.5px;
+    line-height: 1.9;
+    color: var(--ink-dim);
+  }
+  .list div { padding-left: 18px; position: relative; }
+  .list div::before {
+    content: "—";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+  }
+  .aside {
+    margin-top: 18px;
+    padding-left: 18px;
+    border-left: 2px solid var(--accent);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.7;
+    color: var(--ink-dim);
+  }
+  a {
+    color: var(--accent);
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-color: var(--line);
+    text-underline-offset: 3px;
+  }
+  a:hover { text-decoration-color: var(--accent); }
+  hr { border: none; border-top: 1px solid var(--line); margin: 56px 0 40px; }
+  .sign {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-dim);
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .sign .mark {
+    font-weight: 800;
+    color: var(--accent);
+    font-size: 14px;
+    letter-spacing: -0.01em;
+  }
+  @media (max-width: 480px) {
+    .page { padding: 56px 20px 72px; }
+    h1 { font-size: 34px; }
+    .lede { font-size: 18px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="kicker">Warden Browser</div>
+  <h1>Gizlilik Politikası</h1>
+  <div class="meta">Son güncelleme: 25 Temmuz 2026</div>
+
+  <p class="lede">Warden Browser, gizliliğinizi korumak amacıyla geliştirildi. Bu sayfa, uygulamanın verilerinizle ne yaptığını — ve daha da önemlisi, <em>ne yapmadığını</em> — anlatır.</p>
+
+  <div class="entry">
+    <span class="num">01</span>
+    <h2>Hangi veriler toplanıyor?</h2>
+    <p>Hiçbiri. Warden Browser, geliştirici veya üçüncü taraf sunuculara <strong>hiçbir kişisel veri, tarama geçmişi, yer imi veya kullanım verisi göndermez.</strong> Uygulamada analytics, reklam SDK'sı veya takip sistemi bulunmaz.</p>
+    <p>Aşağıdakiler yalnızca cihazınızda, yerel olarak tutulur — uygulamayı kaldırdığınızda hepsi silinir:</p>
+    <div class="list">
+      <div>Tarama geçmişi</div>
+      <div>Yer imleri</div>
+      <div>Site verileri, çerezler ve önbellek</div>
+      <div>Ayar tercihleriniz — tema, arama motoru</div>
+    </div>
+  </div>
+
+  <div class="entry">
+    <span class="num">02</span>
+    <h2>Ziyaret ettiğiniz siteler</h2>
+    <p>Bir siteye girdiğinizde, o sitenin sahibi standart tarayıcı verilerine (IP adresiniz, tarayıcı bilgileriniz) erişebilir. Bu, web'in doğası gereği böyledir ve Warden Browser'ın kontrolü dışındadır.</p>
+  </div>
+
+  <div class="entry">
+    <span class="num">03</span>
+    <h2>Güvenli gezinme</h2>
+    <p>Kötü amaçlı ve kimlik avı sitelerine karşı, Mozilla GeckoView motorunun Safe Browsing özelliği kullanılır. Ziyaret ettiğiniz URL'lerin bir kısmı — tamamı değil, hashlenmiş biçimde — Google'ın Safe Browsing servisine sorgulanabilir.</p>
+    <div class="aside">Bu işlem tarayıcı motorunun kendi altyapısında gerçekleşir; biz bu verilere erişemeyiz. Ayarlardan kapatabilirsiniz.</div>
+  </div>
+
+  <div class="entry">
+    <span class="num">04</span>
+    <h2>Üçüncü taraflarla paylaşım</h2>
+    <p>Yok. Kullanıcılarımıza ait hiçbir veriyi toplamıyor, saklamıyor veya paylaşmıyoruz.</p>
+  </div>
+
+  <div class="entry">
+    <span class="num">05</span>
+    <h2>Reklamlar</h2>
+    <p>Uygulama şu anda reklam göstermiyor.</p>
+  </div>
+
+  <div class="entry">
+    <span class="num">06</span>
+    <h2>Çocukların gizliliği</h2>
+    <p>Warden Browser belirli bir yaş grubunu hedeflemez ve bilerek 13 yaş altı çocuklardan veri toplamaz.</p>
+  </div>
+
+  <div class="entry">
+    <span class="num">07</span>
+    <h2>Değişiklikler</h2>
+    <p>Bu politika zaman zaman güncellenebilir. Önemli değişiklikler bu sayfada yayınlanır.</p>
+  </div>
+
+  <hr>
+
+  <div class="sign">
+    <span>Sorularınız için <a href="https://github.com/mazyLeyn/WardenBrowser/issues" target="_blank" rel="noopener">GitHub Issues</a></span>
+    <span class="mark">Güvendesin</span>
+  </div>
+
+</div>
+</body>
+</html>

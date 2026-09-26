@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Warden Browser — Gizlilik Politikası</title>
+<title>Warden Browser — Gizlilik Politikası / Privacy Policy</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -32,6 +32,46 @@
     position: relative;
   }
   h1, h2, .brand { font-family: "Space Grotesk", "Inter", sans-serif; }
+
+  /* ---- language toggle ---- */
+  [data-lang] { display: none; }
+  body.lang-tr [data-lang="tr"] { display: revert; }
+  body.lang-en [data-lang="en"] { display: revert; }
+  body.lang-tr [data-lang="tr"].inline,
+  body.lang-en [data-lang="en"].inline { display: inline; }
+  body.lang-tr [data-lang="tr"].flex,
+  body.lang-en [data-lang="en"].flex { display: flex; }
+
+  .langswitch {
+    position: fixed;
+    top: max(18px, env(safe-area-inset-top, 0px));
+    right: 18px;
+    z-index: 20;
+    display: flex;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 3px;
+    gap: 2px;
+  }
+  .langswitch button {
+    all: unset;
+    cursor: pointer;
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 13px;
+    border-radius: 999px;
+    color: var(--ink-faint);
+    transition: color 0.25s ease, background 0.25s ease;
+  }
+  .langswitch button.active {
+    color: var(--bg);
+    background: var(--accent-bright);
+  }
+
+  .fade-target { transition: opacity 0.22s ease; }
+  .fade-out { opacity: 0; }
 
   /* ---- ambient background ---- */
   .aura {
@@ -236,31 +276,51 @@
   }
 </style>
 </head>
-<body>
+<body class="lang-tr">
+
+  <div class="langswitch">
+    <button id="btn-tr" class="active" onclick="setLang('tr')">TR</button>
+    <button id="btn-en" onclick="setLang('en')">EN</button>
+  </div>
 
   <div class="aura"></div>
 
-  <div class="wrap">
+  <div class="wrap fade-target">
 
     <div class="hero">
       <div class="eyebrow an an1">Warden Browser</div>
-      <h1 class="an an2">Gizlilik Politikası</h1>
-      <p class="an an3">Bu belge, uygulamanın verilerinizle <strong>ne yaptığını</strong> — ve daha önemlisi ne yapmadığını — açık ve net biçimde ortaya koyar.</p>
-      <div class="meta an an4">Son güncelleme · 25 Temmuz 2026</div>
+      <h1 class="an an2">
+        <span data-lang="tr">Gizlilik Politikası</span>
+        <span data-lang="en">Privacy Policy</span>
+      </h1>
+      <p class="an an3">
+        <span data-lang="tr">Bu belge, uygulamanın verilerinizle <strong>ne yaptığını</strong> — ve daha önemlisi ne yapmadığını — açık ve net biçimde ortaya koyar.</span>
+        <span data-lang="en">This document explains, plainly and precisely, what the app does with your data — and more importantly, <strong>what it doesn't do</strong>.</span>
+      </p>
+      <div class="meta an an4">
+        <span data-lang="tr">Son güncelleme · 25 Temmuz 2026</span>
+        <span data-lang="en">Last updated · July 25, 2026</span>
+      </div>
     </div>
 
     <div class="section">
       <div class="section-inner">
         <div class="section-num">01</div>
         <div>
-          <h2>Hangi veriler toplanıyor?</h2>
-          <p class="body">Hiçbiri. Warden Browser, geliştirici veya üçüncü taraf sunuculara <strong>hiçbir kişisel veri, tarama geçmişi, yer imi veya kullanım verisi göndermez.</strong> Uygulamada analytics, reklam SDK'sı veya takip sistemi bulunmaz.</p>
-          <p class="body">Aşağıdakiler yalnızca cihazınızda, yerel olarak tutulur ve uygulama kaldırıldığında silinir:</p>
+          <h2><span data-lang="tr">Hangi veriler toplanıyor?</span><span data-lang="en">What data is collected?</span></h2>
+          <p class="body">
+            <span data-lang="tr">Hiçbiri. Warden Browser, geliştirici veya üçüncü taraf sunuculara <strong>hiçbir kişisel veri, tarama geçmişi, yer imi veya kullanım verisi göndermez.</strong> Uygulamada analytics, reklam SDK'sı veya takip sistemi bulunmaz.</span>
+            <span data-lang="en">None. Warden Browser <strong>never sends any personal data, browsing history, bookmarks, or usage data</strong> to the developer or any third-party server. The app contains no analytics, ad SDKs, or tracking systems.</span>
+          </p>
+          <p class="body">
+            <span data-lang="tr">Aşağıdakiler yalnızca cihazınızda, yerel olarak tutulur ve uygulama kaldırıldığında silinir:</span>
+            <span data-lang="en">The following is stored locally on your device only, and is deleted when the app is uninstalled:</span>
+          </p>
           <div class="list">
-            <div class="list-item">Tarama geçmişi</div>
-            <div class="list-item">Yer imleri</div>
-            <div class="list-item">Site verileri, çerezler ve önbellek</div>
-            <div class="list-item">Ayar tercihleriniz — tema, arama motoru</div>
+            <div class="list-item"><span data-lang="tr">Tarama geçmişi</span><span data-lang="en">Browsing history</span></div>
+            <div class="list-item"><span data-lang="tr">Yer imleri</span><span data-lang="en">Bookmarks</span></div>
+            <div class="list-item"><span data-lang="tr">Site verileri, çerezler ve önbellek</span><span data-lang="en">Site data, cookies, and cache</span></div>
+            <div class="list-item"><span data-lang="tr">Ayar tercihleriniz — tema, arama motoru</span><span data-lang="en">Your preferences — theme, search engine</span></div>
           </div>
         </div>
       </div>
@@ -270,8 +330,11 @@
       <div class="section-inner">
         <div class="section-num">02</div>
         <div>
-          <h2>Ziyaret ettiğiniz siteler</h2>
-          <p class="body">Bir siteye girdiğinizde, o sitenin sahibi standart tarayıcı verilerine (IP adresiniz, tarayıcı bilgileriniz) erişebilir. Bu, web'in doğası gereği böyledir ve Warden Browser'ın kontrolü dışındadır.</p>
+          <h2><span data-lang="tr">Ziyaret ettiğiniz siteler</span><span data-lang="en">Sites you visit</span></h2>
+          <p class="body">
+            <span data-lang="tr">Bir siteye girdiğinizde, o sitenin sahibi standart tarayıcı verilerine (IP adresiniz, tarayıcı bilgileriniz) erişebilir. Bu, web'in doğası gereği böyledir ve Warden Browser'ın kontrolü dışındadır.</span>
+            <span data-lang="en">When you visit a site, its owner can access standard browser data (your IP address, browser information). This is inherent to how the web works and is outside Warden Browser's control.</span>
+          </p>
         </div>
       </div>
     </div>
@@ -280,9 +343,15 @@
       <div class="section-inner">
         <div class="section-num">03</div>
         <div>
-          <h2>Güvenli gezinme</h2>
-          <p class="body">Kötü amaçlı ve kimlik avı sitelerine karşı, Mozilla GeckoView motorunun Safe Browsing özelliği kullanılır. Ziyaret ettiğiniz URL'lerin bir kısmı — tamamı değil, hashlenmiş biçimde — Google'ın Safe Browsing servisine sorgulanabilir.</p>
-          <div class="quote"><strong>Not:</strong> Bu işlem tarayıcı motorunun kendi altyapısında gerçekleşir; geliştirici bu verilere erişemez. Ayarlardan kapatılabilir.</div>
+          <h2><span data-lang="tr">Güvenli gezinme</span><span data-lang="en">Safe browsing</span></h2>
+          <p class="body">
+            <span data-lang="tr">Kötü amaçlı ve kimlik avı sitelerine karşı, Mozilla GeckoView motorunun Safe Browsing özelliği kullanılır. Ziyaret ettiğiniz URL'lerin bir kısmı — tamamı değil, hashlenmiş biçimde — Google'ın Safe Browsing servisine sorgulanabilir.</span>
+            <span data-lang="en">To protect against malicious and phishing sites, the Safe Browsing feature of the Mozilla GeckoView engine is used. Part of the URLs you visit — not the full URL, in hashed form — may be queried against Google's Safe Browsing service.</span>
+          </p>
+          <div class="quote">
+            <span data-lang="tr"><strong>Not:</strong> Bu işlem tarayıcı motorunun kendi altyapısında gerçekleşir; geliştirici bu verilere erişemez. Ayarlardan kapatılabilir.</span>
+            <span data-lang="en"><strong>Note:</strong> This happens within the browser engine's own infrastructure; the developer cannot access this data. It can be disabled in settings.</span>
+          </div>
         </div>
       </div>
     </div>
@@ -291,8 +360,11 @@
       <div class="section-inner">
         <div class="section-num">04</div>
         <div>
-          <h2>Üçüncü taraflarla paylaşım</h2>
-          <p class="body">Yok. Kullanıcılarımıza ait hiçbir veriyi toplamıyor, saklamıyor veya paylaşmıyoruz.</p>
+          <h2><span data-lang="tr">Üçüncü taraflarla paylaşım</span><span data-lang="en">Third-party sharing</span></h2>
+          <p class="body">
+            <span data-lang="tr">Yok. Kullanıcılarımıza ait hiçbir veriyi toplamıyor, saklamıyor veya paylaşmıyoruz.</span>
+            <span data-lang="en">None. We do not collect, store, or share any data belonging to our users.</span>
+          </p>
         </div>
       </div>
     </div>
@@ -301,8 +373,11 @@
       <div class="section-inner">
         <div class="section-num">05</div>
         <div>
-          <h2>Reklamlar</h2>
-          <p class="body">Uygulama şu anda reklam göstermiyor.</p>
+          <h2><span data-lang="tr">Reklamlar</span><span data-lang="en">Advertising</span></h2>
+          <p class="body">
+            <span data-lang="tr">Uygulama şu anda reklam göstermiyor.</span>
+            <span data-lang="en">The app currently displays no advertising.</span>
+          </p>
         </div>
       </div>
     </div>
@@ -311,8 +386,11 @@
       <div class="section-inner">
         <div class="section-num">06</div>
         <div>
-          <h2>Çocukların gizliliği</h2>
-          <p class="body">Warden Browser belirli bir yaş grubunu hedeflemez ve bilerek 13 yaş altı çocuklardan veri toplamaz.</p>
+          <h2><span data-lang="tr">Çocukların gizliliği</span><span data-lang="en">Children's privacy</span></h2>
+          <p class="body">
+            <span data-lang="tr">Warden Browser belirli bir yaş grubunu hedeflemez ve bilerek 13 yaş altı çocuklardan veri toplamaz.</span>
+            <span data-lang="en">Warden Browser does not target any specific age group and does not knowingly collect data from children under 13.</span>
+          </p>
         </div>
       </div>
     </div>
@@ -321,8 +399,11 @@
       <div class="section-inner">
         <div class="section-num">07</div>
         <div>
-          <h2>Değişiklikler</h2>
-          <p class="body">Bu politika zaman zaman güncellenebilir. Önemli değişiklikler bu sayfada yayınlanır.</p>
+          <h2><span data-lang="tr">Değişiklikler</span><span data-lang="en">Changes</span></h2>
+          <p class="body">
+            <span data-lang="tr">Bu politika zaman zaman güncellenebilir. Önemli değişiklikler bu sayfada yayınlanır.</span>
+            <span data-lang="en">This policy may be updated from time to time. Material changes will be published on this page.</span>
+          </p>
         </div>
       </div>
     </div>
@@ -331,8 +412,11 @@
       <div class="section-inner">
         <div class="section-num">08</div>
         <div>
-          <h2>İletişim</h2>
-          <p class="body">Sorularınız için <a href="https://github.com/mazyLeyn/WardenBrowser/issues" target="_blank" rel="noopener">GitHub Issues</a> üzerinden ulaşabilirsiniz.</p>
+          <h2><span data-lang="tr">İletişim</span><span data-lang="en">Contact</span></h2>
+          <p class="body">
+            <span data-lang="tr">Sorularınız için <a href="https://github.com/mazyLeyn/WardenBrowser/issues" target="_blank" rel="noopener">GitHub Issues</a> üzerinden ulaşabilirsiniz.</span>
+            <span data-lang="en">For questions, reach us via <a href="https://github.com/mazyLeyn/WardenBrowser/issues" target="_blank" rel="noopener">GitHub Issues</a>.</span>
+          </p>
         </div>
       </div>
     </div>
@@ -344,7 +428,7 @@
       </div>
       <div class="links">
         <a href="https://github.com/mazyLeyn/WardenBrowser" target="_blank" rel="noopener">GitHub</a>
-        <a href="https://github.com/mazyLeyn/WardenBrowser/issues" target="_blank" rel="noopener">Destek</a>
+        <a href="https://github.com/mazyLeyn/WardenBrowser/issues" target="_blank" rel="noopener"><span data-lang="tr" class="inline">Destek</span><span data-lang="en" class="inline">Support</span></a>
       </div>
     </footer>
 
@@ -361,6 +445,21 @@
       });
     }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
     revealEls.forEach(el => io.observe(el));
+
+    function setLang(lang) {
+      const body = document.body;
+      if (body.classList.contains('lang-' + lang)) return;
+      const wrap = document.querySelector('.wrap');
+      wrap.classList.add('fade-out');
+      setTimeout(() => {
+        body.classList.remove('lang-tr', 'lang-en');
+        body.classList.add('lang-' + lang);
+        document.getElementById('btn-tr').classList.toggle('active', lang === 'tr');
+        document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+        document.documentElement.lang = lang;
+        wrap.classList.remove('fade-out');
+      }, 180);
+    }
   </script>
 
 </body>

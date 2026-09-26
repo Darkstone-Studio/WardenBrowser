@@ -6,213 +6,362 @@
 <title>Warden Browser — Gizlilik Politikası</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0c0910;
-    --ink: #efeaf7;
-    --ink-dim: #928aa3;
-    --line: #251f2c;
-    --accent: #b39ddb;
+    --bg: #0a0812;
+    --panel: #14101d;
+    --line: #251f30;
+    --ink: #eeecf6;
+    --ink-dim: #8c86a0;
+    --ink-faint: #57516a;
+    --accent: #a78bfa;
+    --accent-bright: #c9b8fb;
   }
   * { box-sizing: border-box; }
-  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  html { scroll-behavior: smooth; }
   body {
     margin: 0;
     background: var(--bg);
     color: var(--ink);
-    font-family: "Inter", -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-family: "Inter", -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
     padding-top: env(safe-area-inset-top, 0px);
     padding-bottom: env(safe-area-inset-bottom, 0px);
-    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    position: relative;
   }
-  .page {
-    max-width: 640px;
+  h1, h2, .brand { font-family: "Space Grotesk", "Inter", sans-serif; }
+
+  /* ---- ambient background ---- */
+  .aura {
+    position: fixed;
+    top: -30%;
+    left: 50%;
+    width: 1200px;
+    height: 900px;
+    transform: translateX(-50%);
+    background: radial-gradient(ellipse at center, rgba(167,139,250,0.14) 0%, transparent 65%);
+    filter: blur(10px);
+    animation: drift 22s ease-in-out infinite alternate;
+    pointer-events: none;
+    z-index: 0;
+  }
+  @keyframes drift {
+    0%   { transform: translateX(-54%) translateY(0) scale(1); }
+    100% { transform: translateX(-46%) translateY(40px) scale(1.08); }
+  }
+
+  .wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 660px;
     margin: 0 auto;
-    padding: 80px 28px 100px;
+    padding: 96px 24px 90px;
   }
-  .kicker {
+
+  /* ---- entrance animation ---- */
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .an {
+    opacity: 0;
+    animation: rise 0.7s cubic-bezier(.16,.9,.3,1) forwards;
+  }
+  .an1 { animation-delay: 0.05s; }
+  .an2 { animation-delay: 0.18s; }
+  .an3 { animation-delay: 0.30s; }
+  .an4 { animation-delay: 0.42s; }
+
+  /* ---- hero ---- */
+  .hero { text-align: center; margin-bottom: 72px; }
+  .eyebrow {
+    display: inline-block;
     font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.2em;
+    font-weight: 600;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
     color: var(--accent);
-    margin-bottom: 20px;
+    padding: 8px 18px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    margin-bottom: 26px;
   }
   h1 {
-    font-size: 44px;
-    font-weight: 900;
-    line-height: 1.08;
-    margin: 0 0 10px;
-    color: var(--ink);
-    letter-spacing: -0.03em;
+    font-size: clamp(32px, 6vw, 44px);
+    font-weight: 600;
+    line-height: 1.15;
+    margin: 0 0 18px;
+    letter-spacing: -0.02em;
   }
+  .hero p {
+    font-size: 16.5px;
+    line-height: 1.7;
+    color: var(--ink-dim);
+    max-width: 460px;
+    margin: 0 auto;
+  }
+  .hero p strong { color: var(--ink); font-weight: 600; }
   .meta {
+    margin-top: 28px;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--ink-faint);
+    letter-spacing: 0.02em;
+  }
+
+  /* ---- section list, understated & serious ---- */
+  .section {
+    padding: 32px 0;
+    border-top: 1px solid var(--line);
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s cubic-bezier(.16,.9,.3,1), transform 0.7s cubic-bezier(.16,.9,.3,1);
+  }
+  .section.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .section:last-of-type { border-bottom: 1px solid var(--line); }
+
+  .section-inner {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    gap: 24px;
+  }
+  .section-num {
+    font-family: "Space Grotesk", sans-serif;
     font-size: 13px;
     font-weight: 500;
-    color: var(--ink-dim);
-    margin-bottom: 48px;
-    padding-bottom: 32px;
-    border-bottom: 1px solid var(--line);
-  }
-  .lede {
-    font-size: 20px;
-    font-weight: 500;
-    line-height: 1.6;
-    color: var(--ink);
-    margin-bottom: 56px;
-    letter-spacing: -0.01em;
-  }
-  .lede em {
-    font-style: normal;
-    font-weight: 700;
-    color: var(--accent);
-  }
-  .entry { margin-bottom: 44px; }
-  .entry .num {
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--ink-dim);
-    letter-spacing: 0.05em;
-    display: block;
-    margin-bottom: 8px;
+    color: var(--ink-faint);
+    padding-top: 2px;
   }
   h2 {
-    font-size: 20px;
-    font-weight: 800;
+    font-size: 19px;
+    font-weight: 600;
     margin: 0 0 12px;
-    color: var(--ink);
     letter-spacing: -0.01em;
   }
-  p {
-    font-size: 15.5px;
-    font-weight: 400;
-    line-height: 1.7;
+  p.body {
+    font-size: 15px;
+    line-height: 1.75;
     color: var(--ink-dim);
     margin: 0 0 12px;
   }
-  p strong { color: var(--ink); font-weight: 700; }
-  .list {
-    margin: 16px 0 0;
-    padding: 0;
-    font-size: 15.5px;
-    line-height: 1.9;
-    color: var(--ink-dim);
+  p.body:last-child { margin-bottom: 0; }
+  p.body strong { color: var(--ink); font-weight: 600; }
+
+  .list { margin-top: 16px; }
+  .list-item {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 8px 0;
+    font-size: 14.5px;
+    color: var(--ink);
   }
-  .list div { padding-left: 18px; position: relative; }
-  .list div::before {
-    content: "—";
-    position: absolute;
-    left: 0;
-    color: var(--accent);
+  .list-item::before {
+    content: "";
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: var(--accent);
+    margin-top: 8px;
+    flex-shrink: 0;
   }
-  .aside {
-    margin-top: 18px;
-    padding-left: 18px;
+
+  .quote {
+    margin-top: 16px;
+    padding: 16px 20px;
+    background: var(--panel);
     border-left: 2px solid var(--accent);
-    font-size: 14px;
-    font-weight: 500;
+    border-radius: 0 6px 6px 0;
+    font-size: 13.5px;
     line-height: 1.7;
     color: var(--ink-dim);
   }
+  .quote strong { color: var(--accent-bright); }
+
   a {
-    color: var(--accent);
-    font-weight: 600;
+    color: var(--accent-bright);
     text-decoration: underline;
     text-decoration-color: var(--line);
     text-underline-offset: 3px;
+    transition: text-decoration-color 0.3s ease, color 0.3s ease;
   }
-  a:hover { text-decoration-color: var(--accent); }
-  hr { border: none; border-top: 1px solid var(--line); margin: 56px 0 40px; }
-  .sign {
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--ink-dim);
+  a:hover { text-decoration-color: var(--accent); color: #ffffff; }
+
+  @media (max-width: 560px) {
+    .section-inner { grid-template-columns: 1fr; gap: 8px; }
+    .section-num { display: none; }
+  }
+
+  /* ---- footer ---- */
+  footer {
+    margin-top: 64px;
+    padding-top: 32px;
+    border-top: 1px solid var(--line);
     display: flex;
     justify-content: space-between;
-    align-items: baseline;
+    align-items: center;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 16px;
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s cubic-bezier(.16,.9,.3,1), transform 0.7s cubic-bezier(.16,.9,.3,1);
   }
-  .sign .mark {
-    font-weight: 800;
-    color: var(--accent);
-    font-size: 14px;
+  footer.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .brand {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink);
     letter-spacing: -0.01em;
   }
-  @media (max-width: 480px) {
-    .page { padding: 56px 20px 72px; }
-    h1 { font-size: 34px; }
-    .lede { font-size: 18px; }
+  .brand span { color: var(--accent); }
+  .brand-sub {
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-top: 2px;
+  }
+  footer .links {
+    display: flex;
+    gap: 22px;
+    font-size: 13px;
   }
 </style>
 </head>
 <body>
-<div class="page">
 
-  <div class="kicker">Warden Browser</div>
-  <h1>Gizlilik Politikası</h1>
-  <div class="meta">Son güncelleme: 25 Temmuz 2026</div>
+  <div class="aura"></div>
 
-  <p class="lede">Warden Browser, gizliliğinizi korumak amacıyla geliştirildi. Bu sayfa, uygulamanın verilerinizle ne yaptığını — ve daha da önemlisi, <em>ne yapmadığını</em> — anlatır.</p>
+  <div class="wrap">
 
-  <div class="entry">
-    <span class="num">01</span>
-    <h2>Hangi veriler toplanıyor?</h2>
-    <p>Hiçbiri. Warden Browser, geliştirici veya üçüncü taraf sunuculara <strong>hiçbir kişisel veri, tarama geçmişi, yer imi veya kullanım verisi göndermez.</strong> Uygulamada analytics, reklam SDK'sı veya takip sistemi bulunmaz.</p>
-    <p>Aşağıdakiler yalnızca cihazınızda, yerel olarak tutulur — uygulamayı kaldırdığınızda hepsi silinir:</p>
-    <div class="list">
-      <div>Tarama geçmişi</div>
-      <div>Yer imleri</div>
-      <div>Site verileri, çerezler ve önbellek</div>
-      <div>Ayar tercihleriniz — tema, arama motoru</div>
+    <div class="hero">
+      <div class="eyebrow an an1">Warden Browser</div>
+      <h1 class="an an2">Gizlilik Politikası</h1>
+      <p class="an an3">Bu belge, uygulamanın verilerinizle <strong>ne yaptığını</strong> — ve daha önemlisi ne yapmadığını — açık ve net biçimde ortaya koyar.</p>
+      <div class="meta an an4">Son güncelleme · 25 Temmuz 2026</div>
     </div>
+
+    <div class="section">
+      <div class="section-inner">
+        <div class="section-num">01</div>
+        <div>
+          <h2>Hangi veriler toplanıyor?</h2>
+          <p class="body">Hiçbiri. Warden Browser, geliştirici veya üçüncü taraf sunuculara <strong>hiçbir kişisel veri, tarama geçmişi, yer imi veya kullanım verisi göndermez.</strong> Uygulamada analytics, reklam SDK'sı veya takip sistemi bulunmaz.</p>
+          <p class="body">Aşağıdakiler yalnızca cihazınızda, yerel olarak tutulur ve uygulama kaldırıldığında silinir:</p>
+          <div class="list">
+            <div class="list-item">Tarama geçmişi</div>
+            <div class="list-item">Yer imleri</div>
+            <div class="list-item">Site verileri, çerezler ve önbellek</div>
+            <div class="list-item">Ayar tercihleriniz — tema, arama motoru</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-inner">
+        <div class="section-num">02</div>
+        <div>
+          <h2>Ziyaret ettiğiniz siteler</h2>
+          <p class="body">Bir siteye girdiğinizde, o sitenin sahibi standart tarayıcı verilerine (IP adresiniz, tarayıcı bilgileriniz) erişebilir. Bu, web'in doğası gereği böyledir ve Warden Browser'ın kontrolü dışındadır.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-inner">
+        <div class="section-num">03</div>
+        <div>
+          <h2>Güvenli gezinme</h2>
+          <p class="body">Kötü amaçlı ve kimlik avı sitelerine karşı, Mozilla GeckoView motorunun Safe Browsing özelliği kullanılır. Ziyaret ettiğiniz URL'lerin bir kısmı — tamamı değil, hashlenmiş biçimde — Google'ın Safe Browsing servisine sorgulanabilir.</p>
+          <div class="quote"><strong>Not:</strong> Bu işlem tarayıcı motorunun kendi altyapısında gerçekleşir; geliştirici bu verilere erişemez. Ayarlardan kapatılabilir.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-inner">
+        <div class="section-num">04</div>
+        <div>
+          <h2>Üçüncü taraflarla paylaşım</h2>
+          <p class="body">Yok. Kullanıcılarımıza ait hiçbir veriyi toplamıyor, saklamıyor veya paylaşmıyoruz.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-inner">
+        <div class="section-num">05</div>
+        <div>
+          <h2>Reklamlar</h2>
+          <p class="body">Uygulama şu anda reklam göstermiyor.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-inner">
+        <div class="section-num">06</div>
+        <div>
+          <h2>Çocukların gizliliği</h2>
+          <p class="body">Warden Browser belirli bir yaş grubunu hedeflemez ve bilerek 13 yaş altı çocuklardan veri toplamaz.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-inner">
+        <div class="section-num">07</div>
+        <div>
+          <h2>Değişiklikler</h2>
+          <p class="body">Bu politika zaman zaman güncellenebilir. Önemli değişiklikler bu sayfada yayınlanır.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-inner">
+        <div class="section-num">08</div>
+        <div>
+          <h2>İletişim</h2>
+          <p class="body">Sorularınız için <a href="https://github.com/mazyLeyn/WardenBrowser/issues" target="_blank" rel="noopener">GitHub Issues</a> üzerinden ulaşabilirsiniz.</p>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <div>
+        <div class="brand">Darkstone <span>Studio</span></div>
+        <div class="brand-sub">Software</div>
+      </div>
+      <div class="links">
+        <a href="https://github.com/mazyLeyn/WardenBrowser" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://github.com/mazyLeyn/WardenBrowser/issues" target="_blank" rel="noopener">Destek</a>
+      </div>
+    </footer>
+
   </div>
 
-  <div class="entry">
-    <span class="num">02</span>
-    <h2>Ziyaret ettiğiniz siteler</h2>
-    <p>Bir siteye girdiğinizde, o sitenin sahibi standart tarayıcı verilerine (IP adresiniz, tarayıcı bilgileriniz) erişebilir. Bu, web'in doğası gereği böyledir ve Warden Browser'ın kontrolü dışındadır.</p>
-  </div>
+  <script>
+    const revealEls = document.querySelectorAll('.section, footer');
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => entry.target.classList.add('visible'), i * 40);
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+    revealEls.forEach(el => io.observe(el));
+  </script>
 
-  <div class="entry">
-    <span class="num">03</span>
-    <h2>Güvenli gezinme</h2>
-    <p>Kötü amaçlı ve kimlik avı sitelerine karşı, Mozilla GeckoView motorunun Safe Browsing özelliği kullanılır. Ziyaret ettiğiniz URL'lerin bir kısmı — tamamı değil, hashlenmiş biçimde — Google'ın Safe Browsing servisine sorgulanabilir.</p>
-    <div class="aside">Bu işlem tarayıcı motorunun kendi altyapısında gerçekleşir; biz bu verilere erişemeyiz. Ayarlardan kapatabilirsiniz.</div>
-  </div>
-
-  <div class="entry">
-    <span class="num">04</span>
-    <h2>Üçüncü taraflarla paylaşım</h2>
-    <p>Yok. Kullanıcılarımıza ait hiçbir veriyi toplamıyor, saklamıyor veya paylaşmıyoruz.</p>
-  </div>
-
-  <div class="entry">
-    <span class="num">05</span>
-    <h2>Reklamlar</h2>
-    <p>Uygulama şu anda reklam göstermiyor.</p>
-  </div>
-
-  <div class="entry">
-    <span class="num">06</span>
-    <h2>Çocukların gizliliği</h2>
-    <p>Warden Browser belirli bir yaş grubunu hedeflemez ve bilerek 13 yaş altı çocuklardan veri toplamaz.</p>
-  </div>
-
-  <div class="entry">
-    <span class="num">07</span>
-    <h2>Değişiklikler</h2>
-    <p>Bu politika zaman zaman güncellenebilir. Önemli değişiklikler bu sayfada yayınlanır.</p>
-  </div>
-
-  <hr>
-
-  <div class="sign">
-    <span>Sorularınız için <a href="https://github.com/mazyLeyn/WardenBrowser/issues" target="_blank" rel="noopener">GitHub Issues</a></span>
-    <span class="mark">Güvendesin</span>
-  </div>
-
-</div>
 </body>
 </html>

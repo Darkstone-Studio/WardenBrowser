@@ -62,6 +62,9 @@
     <string name="address_bar_hint">Ara ya da adres girin</string>
     <string name="homepage_welcome">Premium tarama deneyimine hoş geldiniz</string>
     <string name="private_mode_safe_text">Güvendesin</string>
+    <string name="private_info_title">Gizli sekmede</string>
+    <string name="private_info_saved">Kaydedilmez: geçmiş, çerezler ve indirme kaydı.</string>
+    <string name="private_info_visible">Hâlâ görünür: ziyaret ettiğin siteler ve aramaların internet sağlayıcına, ağ yöneticine ve sitelere görünür. İndirdiğin dosyalar telefonda kalır.</string>
 
     <string name="menu_bookmarks">Yer İmleri</string>
     <string name="menu_history">Geçmiş</string>

@@ -69,6 +69,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var addressBarContainer: View
     private lateinit var homeSearchBarContainer: View
     private lateinit var privateSafeText: android.widget.TextView
+    private lateinit var privateInfoCard: View
 
     private val tabManager get() = (application as WardenApp).tabManager
 
@@ -202,6 +203,7 @@ class MainActivity : AppCompatActivity() {
         addressBarContainer = findViewById(R.id.addressBarContainer)
         homeSearchBarContainer = findViewById(R.id.homeSearchBarContainer)
         privateSafeText = findViewById(R.id.privateSafeText)
+        privateInfoCard = findViewById(R.id.privateInfoCard)
     }
 
     private fun applySavedTheme() {
@@ -643,6 +645,8 @@ class MainActivity : AppCompatActivity() {
         
         // Private Mode Safe Text
         privateSafeText.setTextColor(accentColor)
+
+        privateInfoCard.visibility = if (isPrivateMode) View.VISIBLE else View.GONE
 
         if (isPrivateMode) {
             privateSafeText.visibility = View.VISIBLE

@@ -62,6 +62,9 @@
     <string name="address_bar_hint">Search or enter address</string>
     <string name="homepage_welcome">Welcome to premium browsing</string>
     <string name="private_mode_safe_text">You\'re safe</string>
+    <string name="private_info_title">In a private tab</string>
+    <string name="private_info_saved">Not saved: history, cookies and download records.</string>
+    <string name="private_info_visible">Still visible: the sites you visit and your searches are visible to your internet provider, network admin and the sites themselves. Downloaded files stay on your phone.</string>
 
     <string name="menu_bookmarks">Bookmarks</string>
     <string name="menu_history">History</string>

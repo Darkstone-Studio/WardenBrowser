@@ -69,7 +69,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var addressBarContainer: View
     private lateinit var homeSearchBarContainer: View
     private lateinit var privateSafeText: android.widget.TextView
-    private lateinit var privateInfoCard: View
 
     private val tabManager get() = (application as WardenApp).tabManager
 
@@ -203,7 +202,6 @@ class MainActivity : AppCompatActivity() {
         addressBarContainer = findViewById(R.id.addressBarContainer)
         homeSearchBarContainer = findViewById(R.id.homeSearchBarContainer)
         privateSafeText = findViewById(R.id.privateSafeText)
-        privateInfoCard = findViewById(R.id.privateInfoCard)
     }
 
     private fun applySavedTheme() {
@@ -645,8 +643,14 @@ class MainActivity : AppCompatActivity() {
         
         // Private Mode Safe Text
         privateSafeText.setTextColor(accentColor)
-
-        privateInfoCard.visibility = if (isPrivateMode) View.VISIBLE else View.GONE
+        androidx.core.content.ContextCompat.getDrawable(this, R.drawable.ic_info)?.mutate()?.let { icon ->
+            val size = (18 * resources.displayMetrics.density).toInt()
+            icon.setBounds(0, 0, size, size)
+            icon.setTint(accentColor)
+            privateSafeText.compoundDrawablePadding = (8 * resources.displayMetrics.density).toInt()
+            privateSafeText.setCompoundDrawablesRelative(null, null, icon, null)
+        }
+        privateSafeText.setOnClickListener { showPrivateInfoDialog() }
 
         if (isPrivateMode) {
             privateSafeText.visibility = View.VISIBLE
@@ -725,6 +729,14 @@ class MainActivity : AppCompatActivity() {
         findViewById<com.google.android.material.appbar.MaterialToolbar>(R.id.toolbar).navigationIcon = null
         
         session.loadUri("about:blank")
+    }
+
+    private fun showPrivateInfoDialog() {
+        MaterialAlertDialogBuilder(this)
+            .setTitle(getString(R.string.private_info_title))
+            .setMessage(getString(R.string.private_info_saved) + "\n\n" + getString(R.string.private_info_visible))
+            .setPositiveButton(android.R.string.ok, null)
+            .show()
     }
 
     private fun showOverflowMenu() {

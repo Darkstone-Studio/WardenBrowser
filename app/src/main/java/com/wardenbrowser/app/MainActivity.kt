@@ -795,6 +795,9 @@ class MainActivity : AppCompatActivity() {
         findViewById<com.google.android.material.appbar.MaterialToolbar>(R.id.toolbar).navigationIcon = null
         
         session.loadUri("about:blank")
+
+        // Klavye kapalıysa kaydırmayı sıfırla (aramadan dönüşte takılı kalan ofseti temizler)
+        ViewCompat.getRootWindowInsets(window.decorView)?.let { applyKeyboardOffset(it) }
     }
 
     private fun showPrivateInfoDialog() {
@@ -887,7 +890,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupKeyboardAnimation() {
-        val centralLayout = findViewById<View>(R.id.centralLayout)
         ViewCompat.setWindowInsetsAnimationCallback(
             window.decorView,
             object : WindowInsetsAnimationCompat.Callback(DISPATCH_MODE_STOP) {
@@ -895,18 +897,30 @@ class MainActivity : AppCompatActivity() {
                     insets: WindowInsetsCompat,
                     runningAnimations: MutableList<WindowInsetsAnimationCompat>
                 ): WindowInsetsCompat {
-                    val imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime())
-                    val systemBarsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-                    val diff = (imeInsets.bottom - systemBarsInsets.bottom).coerceAtLeast(0)
-                    
-                    if (homepageContainer.visibility == View.VISIBLE) {
-                        centralLayout.translationY = -diff.toFloat() / 2f
-                        privateSafeText.translationY = -diff.toFloat() / 2f
-                    }
+                    applyKeyboardOffset(insets)
                     return insets
+                }
+
+                override fun onEnd(animation: WindowInsetsAnimationCompat) {
+                    // Animasyon bittiğinde kesin son değeri uygula (görünmezken takılı kalmasın)
+                    ViewCompat.getRootWindowInsets(window.decorView)?.let { applyKeyboardOffset(it) }
                 }
             }
         )
+    }
+
+    /**
+     * Ana ekran içeriğini klavye yüksekliğinin yarısı kadar yukarı kaydırır.
+     * Ana ekran gizliyken de uygulanır; böylece klavye aramadan sonra kapandığında
+     * kaydırma sıfırlanır ve ana ekrana dönünce içerik yerinde durur.
+     */
+    private fun applyKeyboardOffset(insets: WindowInsetsCompat) {
+        val imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime())
+        val systemBarsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+        val diff = (imeInsets.bottom - systemBarsInsets.bottom).coerceAtLeast(0)
+        val offset = -diff.toFloat() / 2f
+        findViewById<View>(R.id.centralLayout).translationY = offset
+        privateSafeText.translationY = offset
     }
 
     private fun setupBackNavigation() {

@@ -507,6 +507,17 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /** Seçili temaya göre hata sayfası teması: light, dark veya (gizli modda) private. */
+    private fun errorPageTheme(): String {
+        val isNight = (resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK) ==
+            android.content.res.Configuration.UI_MODE_NIGHT_YES
+        return when {
+            isPrivateMode -> "private"
+            isNight -> "dark"
+            else -> "light"
+        }
+    }
+
     private fun escapeHtmlAttr(value: String): String = value
         .replace("&", "&amp;")
         .replace("<", "&lt;")
@@ -521,6 +532,7 @@ class MainActivity : AppCompatActivity() {
         val html = assets.open("error_offline.html").bufferedReader().use { it.readText() }
             .replace("{{RETRY_URL}}", retryUrl)
             .replace("{{LANG}}", resources.configuration.locales[0].language)
+            .replace("{{THEME}}", errorPageTheme())
             .replace("{{TITLE}}", escapeHtmlAttr(getString(R.string.error_offline_title)))
             .replace("{{MESSAGE}}", escapeHtmlAttr(getString(R.string.error_offline_message)))
             .replace("{{RETRY_LABEL}}", escapeHtmlAttr(getString(R.string.error_offline_retry)))

@@ -1,25 +1,36 @@
 <!DOCTYPE html>
-<html lang="{{LANG}}">
+<html lang="{{LANG}}" data-theme="{{THEME}}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="color-scheme" content="light dark">
     <title>{{TITLE}}</title>
     <style>
-        :root {
+        /* Tema uygulamadan gelir (data-theme): light | dark | private */
+        :root[data-theme="light"] {
+            color-scheme: light;
             --bg: #FFFFFF;
             --text: #121212;
             --muted: #757575;
             --accent: #3B82F6;
-            --accent-pressed: #2563EB;
+            --accent-soft: rgba(59, 130, 246, 0.12);
         }
 
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --bg: #121212;
-                --text: #FFFFFF;
-                --muted: #9E9E9E;
-            }
+        :root[data-theme="dark"] {
+            color-scheme: dark;
+            --bg: #121212;
+            --text: #FFFFFF;
+            --muted: #9E9E9E;
+            --accent: #3B82F6;
+            --accent-soft: rgba(59, 130, 246, 0.16);
+        }
+
+        :root[data-theme="private"] {
+            color-scheme: dark;
+            --bg: #1A121F;
+            --text: #FFFFFF;
+            --muted: #9E9E9E;
+            --accent: #A78BFA;
+            --accent-soft: rgba(167, 139, 250, 0.16);
         }
 
         * { box-sizing: border-box; }
@@ -63,15 +74,15 @@
             font-size: 14px;
             line-height: 1.5;
             color: var(--muted);
-            margin: 0 0 32px;
+            margin: 0 0 28px;
         }
 
         .btn-retry {
             display: inline-block;
-            background-color: var(--accent);
-            color: #FFFFFF;
-            padding: 12px 32px;
-            font-size: 15px;
+            color: var(--accent);
+            border: 1px solid var(--accent);
+            padding: 9px 24px;
+            font-size: 14px;
             font-weight: 500;
             border-radius: 999px;
             text-decoration: none;
@@ -79,7 +90,7 @@
         }
 
         .btn-retry:active {
-            background-color: var(--accent-pressed);
+            background-color: var(--accent-soft);
         }
     </style>
 </head>

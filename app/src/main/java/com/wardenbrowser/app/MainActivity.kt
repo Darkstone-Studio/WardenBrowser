@@ -941,16 +941,36 @@ class MainActivity : AppCompatActivity() {
         popup.show()
     }
 
+    /**
+     * Sunucudan gelen dosya adını güvenli hale getirir: dizin ayraçlarını ve "../" gibi
+     * yol parçalarını atar, kontrol/yasak karakterleri temizler, baştaki noktaları siler.
+     * Geçerli bir ad kalmazsa null döner.
+     */
+    private fun sanitizeFileName(name: String): String? {
+        val cleaned = name
+            .substringAfterLast('/')
+            .substringAfterLast('\\')
+            .filter { it.code >= 32 && it !in "<>:\"|?*" }
+            .trim()
+            .trimStart('.')
+            .take(120)
+            .trim()
+        return cleaned.ifBlank { null }
+    }
+
     private fun startDownload(response: org.mozilla.geckoview.WebResponse) {
         val url = response.uri
         val contentDisposition = response.headers["Content-Disposition"]
         val mimeType = response.headers["Content-Type"] ?: "application/octet-stream"
 
-        val fileName = contentDisposition
+        val rawFileName = contentDisposition
             ?.substringAfter("filename=", "")
+            ?.substringBefore(';')
             ?.trim('"', ' ')
             ?.ifBlank { null }
             ?: android.webkit.URLUtil.guessFileName(url, contentDisposition, mimeType)
+        val fileName = sanitizeFileName(rawFileName)
+            ?: android.webkit.URLUtil.guessFileName(url, null, mimeType).let { sanitizeFileName(it) ?: "download" }
 
         try {
             val request = android.app.DownloadManager.Request(android.net.Uri.parse(url)).apply {

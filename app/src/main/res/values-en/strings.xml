@@ -106,4 +106,7 @@
     <string name="tabs_empty_private">No open private tabs.</string>
     <string name="tab_default_title_private">New Private Tab</string>
     <string name="tabs_new_private_tab">New Private Tab</string>
+    <string name="error_offline_title">No connection</string>
+    <string name="error_offline_message">Check your internet connection and try again.</string>
+    <string name="error_offline_retry">Try again</string>
 </resources>

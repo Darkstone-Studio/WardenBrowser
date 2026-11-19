@@ -106,4 +106,7 @@
     <string name="tabs_empty_private">Açık gizli sekme yok.</string>
     <string name="tab_default_title_private">Yeni Gizli Sekme</string>
     <string name="tabs_new_private_tab">Yeni Gizli Sekme</string>
+    <string name="error_offline_title">Bağlantı yok</string>
+    <string name="error_offline_message">İnternet bağlantını kontrol edip tekrar dene.</string>
+    <string name="error_offline_retry">Tekrar dene</string>
 </resources>

@@ -520,6 +520,10 @@ class MainActivity : AppCompatActivity() {
             ?.let { escapeHtmlAttr(it) } ?: "#"
         val html = assets.open("error_offline.html").bufferedReader().use { it.readText() }
             .replace("{{RETRY_URL}}", retryUrl)
+            .replace("{{LANG}}", resources.configuration.locales[0].language)
+            .replace("{{TITLE}}", escapeHtmlAttr(getString(R.string.error_offline_title)))
+            .replace("{{MESSAGE}}", escapeHtmlAttr(getString(R.string.error_offline_message)))
+            .replace("{{RETRY_LABEL}}", escapeHtmlAttr(getString(R.string.error_offline_retry)))
         val base64 = android.util.Base64.encodeToString(html.toByteArray(Charsets.UTF_8), android.util.Base64.NO_WRAP)
         return "data:text/html;charset=utf-8;base64,$base64"
     }

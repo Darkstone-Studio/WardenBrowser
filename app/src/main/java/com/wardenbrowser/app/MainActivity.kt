@@ -110,6 +110,7 @@ class MainActivity : AppCompatActivity() {
     private var canGoForward: Boolean = false
     private var lastFailedUrl: String? = null
     private var isErrorPageShown: Boolean = false
+    private var appliedDesktopMode: Boolean? = null
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -213,17 +214,41 @@ class MainActivity : AppCompatActivity() {
 
     private fun applySettings(targetSession: GeckoSession? = null) {
         val prefs = PreferenceManager.getDefaultSharedPreferences(this)
-        val s = targetSession ?: session
-        
-        // JavaScript Ayarı
-        s.settings.allowJavascript = prefs.getBoolean("javascript_enabled", true)
-        
-        // Masaüstü Modu Ayarı
         val isDesktopMode = prefs.getBoolean("desktop_mode", false)
-        s.settings.userAgentMode = if (isDesktopMode) {
-            GeckoSessionSettings.USER_AGENT_MODE_DESKTOP
+        val javascriptEnabled = prefs.getBoolean("javascript_enabled", true)
+
+        // Hedef verilmediyse (ayarlardan dönüş) tüm sekmelere uygula, yalnızca açık olana değil
+        val sessions = if (targetSession != null) {
+            listOf(targetSession)
         } else {
-            GeckoSessionSettings.USER_AGENT_MODE_MOBILE
+            (tabManager.allTabs().map { it.session } + session).distinct()
+        }
+
+        sessions.forEach { s ->
+            // JavaScript Ayarı
+            s.settings.allowJavascript = javascriptEnabled
+
+            // Masaüstü Modu: hem kullanıcı ajanı hem görünüm alanı (viewport) masaüstüne geçmeli,
+            // aksi halde siteler telefon genişliğine göre mobil düzene döner
+            s.settings.userAgentMode = if (isDesktopMode) {
+                GeckoSessionSettings.USER_AGENT_MODE_DESKTOP
+            } else {
+                GeckoSessionSettings.USER_AGENT_MODE_MOBILE
+            }
+            s.settings.viewportMode = if (isDesktopMode) {
+                GeckoSessionSettings.VIEWPORT_MODE_DESKTOP
+            } else {
+                GeckoSessionSettings.VIEWPORT_MODE_MOBILE
+            }
+        }
+
+        // Mod değiştiyse açık sayfayı yeni moda göre yeniden yükle
+        if (targetSession == null) {
+            val changed = appliedDesktopMode != null && appliedDesktopMode != isDesktopMode
+            appliedDesktopMode = isDesktopMode
+            if (changed && !isErrorPageShown && homepageContainer.visibility != View.VISIBLE) {
+                session.reload(GeckoSession.LOAD_FLAGS_BYPASS_CACHE)
+            }
         }
     }
 

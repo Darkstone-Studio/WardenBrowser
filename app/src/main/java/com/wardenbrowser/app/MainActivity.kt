@@ -109,6 +109,7 @@ class MainActivity : AppCompatActivity() {
     private var canGoBack: Boolean = false
     private var canGoForward: Boolean = false
     private var lastFailedUrl: String? = null
+    private var isErrorPageShown: Boolean = false
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -306,14 +307,6 @@ class MainActivity : AppCompatActivity() {
     private fun attachDelegates(target: GeckoSession) {
         target.navigationDelegate = object : GeckoSession.NavigationDelegate {
             override fun onLoadError(session: GeckoSession, uri: String?, error: WebRequestError): GeckoResult<String>? {
-                // Yenileme butonuna basıldıysa asıl sayfayı tekrar yükle
-                if (uri?.contains("warden.retry") == true) {
-                    runOnUiThread {
-                        lastFailedUrl?.let { session.loadUri(it) }
-                    }
-                    return GeckoResult.fromValue("") 
-                }
-
                 android.util.Log.d("GeckoError", "Category: ${error.category}, Code: ${error.code}")
                 
                 return try {
@@ -345,15 +338,20 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onLocationChange(session: GeckoSession, url: String?, permissions: MutableList<GeckoSession.PermissionDelegate.ContentPermission>, hasUserGesture: Boolean) {
-                url?.let {
+                val isErrorPage = url?.startsWith("data:text/html") == true
+                if (target == this@MainActivity.session) {
+                    isErrorPageShown = isErrorPage
+                }
+                val shownUrl = if (isErrorPage) lastFailedUrl else url
+                shownUrl?.let {
                     if (it != "about:blank") {
                         toolbarSearchBar.setText(it)
-                        if (!isPrivateMode) {
+                        if (!isPrivateMode && !isErrorPage) {
                             dbHelper.addHistory(currentTitle ?: it, it)
                         }
                     }
                 }
-                url?.let {
+                shownUrl?.let {
                     tabManager.allTabs().find { t -> t.session == target }?.url = it
                 }
             }
@@ -442,7 +440,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupListeners() {
         browserContainer.setOnRefreshListener {
-            session.reload()
+            reloadCurrentPage()
             browserContainer.isRefreshing = false
         }
 
@@ -473,7 +471,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_back -> if (canGoBack) session.goBack()
                 R.id.nav_forward -> if (canGoForward) session.goForward()
                 R.id.nav_home -> showHomepage()
-                R.id.nav_refresh -> session.reload()
+                R.id.nav_refresh -> reloadCurrentPage()
                 R.id.nav_menu -> showOverflowMenu()
             }
             false
@@ -499,8 +497,29 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /** Hata sayfasındaysak asıl adresi, değilsek mevcut sayfayı yeniden yükler. */
+    private fun reloadCurrentPage() {
+        val failed = lastFailedUrl
+        if (isErrorPageShown && failed != null) {
+            session.loadUri(failed)
+        } else {
+            session.reload()
+        }
+    }
+
+    private fun escapeHtmlAttr(value: String): String = value
+        .replace("&", "&amp;")
+        .replace("<", "&lt;")
+        .replace(">", "&gt;")
+        .replace("\"", "&quot;")
+        .replace("'", "&#39;")
+
     private fun loadOfflineErrorPage(): String {
+        val retryUrl = lastFailedUrl
+            ?.takeIf { it.startsWith("http://") || it.startsWith("https://") }
+            ?.let { escapeHtmlAttr(it) } ?: "#"
         val html = assets.open("error_offline.html").bufferedReader().use { it.readText() }
+            .replace("{{RETRY_URL}}", retryUrl)
         val base64 = android.util.Base64.encodeToString(html.toByteArray(Charsets.UTF_8), android.util.Base64.NO_WRAP)
         return "data:text/html;charset=utf-8;base64,$base64"
     }

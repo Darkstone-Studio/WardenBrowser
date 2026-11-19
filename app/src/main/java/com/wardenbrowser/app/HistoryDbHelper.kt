@@ -24,7 +24,7 @@ class HistoryDbHelper private constructor(context: Context) : SQLiteOpenHelper(c
         private const val KEY_TIMESTAMP = "timestamp"
 
         /** Saklanacak en fazla kayıt sayısı; fazlası en eskiden başlayarak silinir. */
-        private const val MAX_HISTORY_ENTRIES = 1000
+        private const val MAX_HISTORY_ENTRIES = 500
 
         @Volatile
         private var instance: HistoryDbHelper? = null

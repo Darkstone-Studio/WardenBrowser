@@ -23,6 +23,9 @@ class HistoryDbHelper private constructor(context: Context) : SQLiteOpenHelper(c
         private const val KEY_URL = "url"
         private const val KEY_TIMESTAMP = "timestamp"
 
+        /** Saklanacak en fazla kayıt sayısı; fazlası en eskiden başlayarak silinir. */
+        private const val MAX_HISTORY_ENTRIES = 1000
+
         @Volatile
         private var instance: HistoryDbHelper? = null
 
@@ -56,7 +59,16 @@ class HistoryDbHelper private constructor(context: Context) : SQLiteOpenHelper(c
             put(KEY_TIMESTAMP, System.currentTimeMillis())
         }
         db.insert(TABLE_HISTORY, null, values)
+        trimHistory(db)
         // db.close() kaldırıldı - Singleton yönetimi için açık tutulur
+    }
+
+    /** En yeni [MAX_HISTORY_ENTRIES] kaydı bırakır, daha eskilerini siler. */
+    private fun trimHistory(db: SQLiteDatabase) {
+        db.execSQL(
+            "DELETE FROM $TABLE_HISTORY WHERE $KEY_ID <= " +
+                "(SELECT $KEY_ID FROM $TABLE_HISTORY ORDER BY $KEY_ID DESC LIMIT 1 OFFSET $MAX_HISTORY_ENTRIES)"
+        )
     }
 
     fun getAllHistory(): List<HistoryItem> {

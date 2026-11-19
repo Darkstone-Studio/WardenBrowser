@@ -54,7 +54,6 @@
     <string name="downloads_title">Downloads</string>
     <string name="downloads_empty">No downloaded files yet.</string>
     <string name="downloads_clear_full">Clear Downloads</string>
-    <string name="downloads_clear_short">Clear</string>
 
     <string name="tabs_title">Tabs</string>
     <string name="tabs_new_tab">New Tab</string>
@@ -93,7 +92,6 @@
     <string name="welcome_thanks">Thank you for choosing us!</string>
     <string name="welcome_get_started">Get Started</string>
     <string name="search_engine_desc">Search engine</string>
-    <string name="search_engine_badge_default">G</string>
     <string name="search_engine_icon_desc">Search engine icon</string>
     <string name="pref_support">Support Us! ❤️</string>
     <string name="toast_download_started">Downloading: %1$s</string>

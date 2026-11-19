@@ -18,10 +18,5 @@
         <item name="android:popupBackground">@drawable/menu_background_light</item>
     </style>
 
-    <style name="PopupMenuOverlay" parent="ThemeOverlay.AppCompat.Light">
-        <item name="android:textColorPrimary">#121212</item>
-        <item name="colorSurface">#FFFFFF</item>
-        <item name="colorOnSurface">#121212</item>
-    </style>
     <style name="Theme.WardenBrowser" parent="Base.Theme.WardenBrowser" />
 </resources>

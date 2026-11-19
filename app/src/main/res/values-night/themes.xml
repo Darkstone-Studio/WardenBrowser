@@ -18,9 +18,4 @@
         <item name="android:popupBackground">@drawable/menu_background_dark</item>
     </style>
 
-    <style name="PopupMenuOverlay" parent="ThemeOverlay.AppCompat.Dark">
-        <item name="android:textColorPrimary">@color/text_primary</item>
-        <item name="colorSurface">@color/surface_dark</item>
-        <item name="colorOnSurface">@color/text_primary</item>
-    </style>
 </resources>

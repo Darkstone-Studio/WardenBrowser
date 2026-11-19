@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
     <!-- Warden Browser Premium Palette (Shared) -->
     <color name="accent_blue">#3B82F6</color>
-    <color name="accent_blue_translucent">#333B82F6</color>
     <color name="accent_blue_dark">#2563EB</color>
 
     <!-- Light Mode Palette -->
@@ -23,9 +21,5 @@
     <color name="private_mode_accent">#A78BFA</color>
 
     <!-- Legacy / Compatibility -->
-    <color name="background_dark">#121212</color>
-    <color name="surface_dark">#1E1E1E</color>
-    <color name="accent_yellow">#FFD600</color>
-    <color name="accent_yellow_dark">#C6A700</color>
     <color name="danger_red">#E53935</color>
 </resources>

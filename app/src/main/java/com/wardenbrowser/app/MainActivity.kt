@@ -111,6 +111,10 @@ class MainActivity : AppCompatActivity() {
     private var lastFailedUrl: String? = null
     private var isErrorPageShown: Boolean = false
     private var appliedDesktopMode: Boolean? = null
+    // Veritabanı yazmaları arayüz thread'ini bekletmesin
+    private val ioExecutor = java.util.concurrent.Executors.newSingleThreadExecutor { r ->
+        Thread(r, "history-io").apply { isDaemon = true }
+    }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -252,19 +256,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun recreateGeckoSession(showToast: Boolean = true) {
-        try {
-            session.close()
-        } catch (e: Exception) {
-            // Oturum zaten kapalı olabilir
-        }
-        setupGeckoView()
-        showHomepage()
-        if (showToast) {
-            Toast.makeText(this, getString(R.string.toast_engine_refreshed), Toast.LENGTH_SHORT).show()
-        }
-    }
-
     private fun recreateTabSession(tab: BrowserTab, showToast: Boolean) {
         val wasCurrent = tabManager.currentTab?.id == tab.id
         tabManager.closeTab(tab.id)
@@ -372,7 +363,8 @@ class MainActivity : AppCompatActivity() {
                     if (it != "about:blank") {
                         toolbarSearchBar.setText(it)
                         if (!isPrivateMode && !isErrorPage) {
-                            dbHelper.addHistory(currentTitle ?: it, it)
+                            val historyTitle = currentTitle ?: it
+                            ioExecutor.execute { dbHelper.addHistory(historyTitle, it) }
                         }
                     }
                 }
@@ -580,11 +572,19 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private val bgAnimators = HashMap<View, ValueAnimator>()
+
     private fun animateBackgroundColor(view: View, toColor: Int) {
         val fromColor = if (view.background is ColorDrawable) {
             (view.background as ColorDrawable).color
         } else {
             ContextCompat.getColor(this, R.color.app_background)
+        }
+        // Süren animasyon varsa iptal et; renk zaten aynıysa animasyon başlatma (gereksiz çizim)
+        bgAnimators.remove(view)?.cancel()
+        if (fromColor == toColor) {
+            view.setBackgroundColor(toColor)
+            return
         }
         val colorAnimation = ValueAnimator.ofObject(ArgbEvaluator(), fromColor, toColor)
         colorAnimation.duration = 600
@@ -592,6 +592,12 @@ class MainActivity : AppCompatActivity() {
         colorAnimation.addUpdateListener { animator ->
             view.setBackgroundColor(animator.animatedValue as Int)
         }
+        colorAnimation.addListener(object : android.animation.AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: android.animation.Animator) {
+                if (bgAnimators[view] === colorAnimation) bgAnimators.remove(view)
+            }
+        })
+        bgAnimators[view] = colorAnimation
         colorAnimation.start()
     }
 

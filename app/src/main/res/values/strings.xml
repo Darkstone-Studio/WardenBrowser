@@ -54,7 +54,6 @@
     <string name="downloads_title">İndirilenler</string>
     <string name="downloads_empty">Henüz indirilen dosya yok.</string>
     <string name="downloads_clear_full">İndirilenleri Temizle</string>
-    <string name="downloads_clear_short">Temiz</string>
 
     <string name="tabs_title">Sekmeler</string>
     <string name="tabs_new_tab">Yeni Sekme</string>
@@ -93,7 +92,6 @@
     <string name="welcome_thanks">Bizi seçtiğiniz için teşekkürler!</string>
     <string name="welcome_get_started">Başla</string>
     <string name="search_engine_desc">Arama motoru</string>
-    <string name="search_engine_badge_default">G</string>
     <string name="search_engine_icon_desc">Arama motoru ikonu</string>
     <string name="pref_support">Destek Ol! ❤️</string>
     <string name="toast_download_started">İndiriliyor: %1$s</string>

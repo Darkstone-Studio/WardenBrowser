@@ -44,7 +44,7 @@ class WardenApp : Application() {
             val safeBrowsingEnabled = prefs.getBoolean("safe_browsing_enabled", true)
             val httpsOnlyEnabled = prefs.getBoolean("https_only_enabled", true)
 
-            val settings = GeckoRuntimeSettings.Builder()
+            val builder = GeckoRuntimeSettings.Builder()
                 .contentBlocking(
                     ContentBlocking.Settings.Builder()
                         .antiTracking(if (trackerBlockingEnabled) ContentBlocking.AntiTracking.DEFAULT else ContentBlocking.AntiTracking.NONE)
@@ -55,9 +55,24 @@ class WardenApp : Application() {
                 .allowInsecureConnections(
                     if (httpsOnlyEnabled) GeckoRuntimeSettings.HTTPS_ONLY else GeckoRuntimeSettings.ALLOW_ALL
                 )
-                .build()
-            geckoRuntime = GeckoRuntime.create(this, settings)
+
+            // Düşük RAM'li telefonlarda site izolasyonunu (fission) kapat: her site ayrı işlem açtığı için
+            // bellek yetmeyip sistem içerik işlemini öldürüyor ve sayfa baştan yükleniyordu.
+            // Yeterli belleği olan telefonlarda motorun varsayılanı (tam koruma) aynen kalır.
+            if (isLowMemoryDevice()) {
+                builder.fissionEnabled(false)
+            }
+
+            geckoRuntime = GeckoRuntime.create(this, builder.build())
         }
+    }
+
+    /** Toplam RAM 4,5 GB altındaysa (pazarlamada "4 GB ve altı" telefonlar) true. */
+    private fun isLowMemoryDevice(): Boolean {
+        val am = getSystemService(ACTIVITY_SERVICE) as ActivityManager
+        val info = ActivityManager.MemoryInfo()
+        am.getMemoryInfo(info)
+        return info.totalMem < LOW_MEMORY_THRESHOLD_BYTES
     }
 
     private fun isMainProcess(): Boolean {
@@ -69,5 +84,9 @@ class WardenApp : Application() {
             processes?.find { it.pid == Process.myPid() }?.processName
         }
         return processName == null || processName == packageName
+    }
+
+    private companion object {
+        const val LOW_MEMORY_THRESHOLD_BYTES = 4_831_838_208L // 4,5 GiB
     }
 }

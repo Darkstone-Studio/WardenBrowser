@@ -43,7 +43,7 @@ En son sürüm: [Download v1.8.1](https://github.com/Darkstone-Studio/WardenBrow
 ## Kullanılan Teknolojiler
 
 ![Kotlin](https://img.shields.io/badge/Kotlin-Native-7F52FF?style=flat-square&logo=kotlin&logoColor=white)
-![Android SDK](https://img.shields.io/badge/Android_SDK-v21+-3DDC84?style=flat-square&logo=android&logoColor=white)
+![Android SDK](https://img.shields.io/badge/Android_SDK-v26+-3DDC84?style=flat-square&logo=android&logoColor=white)
 ![GeckoView](https://img.shields.io/badge/Mozilla_GeckoView-Engine-FF7139?style=flat-square&logo=firefoxbrowser&logoColor=white)
 ![Material Design](https://img.shields.io/badge/Material_Components-UI-757575?style=flat-square&logo=materialdesign&logoColor=white)
 ![SQLite](https://img.shields.io/badge/SQLite-History-003B57?style=flat-square&logo=sqlite&logoColor=white)

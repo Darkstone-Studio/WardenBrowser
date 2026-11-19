@@ -984,7 +984,9 @@ class MainActivity : AppCompatActivity() {
             downloadManager.enqueue(request)
 
             val savedPath = "${android.os.Environment.DIRECTORY_DOWNLOADS}/$fileName"
-            DownloadsDbHelper.getInstance(this@MainActivity).addDownload(fileName, url, savedPath, mimeType)
+            if (!isPrivateMode) {
+                DownloadsDbHelper.getInstance(this@MainActivity).addDownload(fileName, url, savedPath, mimeType)
+            }
 
             Toast.makeText(this@MainActivity, getString(R.string.toast_download_started, fileName), Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {

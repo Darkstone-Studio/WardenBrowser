@@ -6,8 +6,8 @@ plugins {
 android {
     namespace = "com.wardenbrowser.app"
     compileSdk {
-        version = release(36) {
-            minorApiLevel = 1
+        version = release(37) {
+            minorApiLevel = 2
         }
     }
 
@@ -15,8 +15,8 @@ android {
         applicationId = "com.wardenbrowser.app"
         minSdk = 26
         targetSdk = 36
-        versionCode = 36
-        versionName = "1.8.0"
+        versionCode = 37
+        versionName = "1.8.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

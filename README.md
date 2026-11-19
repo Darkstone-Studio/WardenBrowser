@@ -38,7 +38,7 @@ gösterebilir — bu normaldir.
 
 ## İndir
 
-En son sürüm: [Download v1.8.0](https://github.com/Darkstone-Studio/WardenBrowser/releases/latest)
+En son sürüm: [Download v1.8.1](https://github.com/Darkstone-Studio/WardenBrowser/releases/latest)
 
 ## Kullanılan Teknolojiler
 

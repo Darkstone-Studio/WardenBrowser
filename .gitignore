@@ -13,6 +13,8 @@
 .externalNativeBuild
 .cxx
 local.properties
+.kotlin
+.artifacts
 
 # Signing / keystore - ASLA push etme
 *.jks

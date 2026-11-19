@@ -1,0 +1,5 @@
+- [x] Update `values/strings.xml` and `values-en/strings.xml` with nav and tab strings
+- [x] Update `bottom_nav_menu.xml` to use string resources
+- [x] Set `BrowserTab.title` default to empty string
+- [x] Update `TabAdapter.kt` to show localized default title
+- [x] Verify final localization across the app

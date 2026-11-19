@@ -1,0 +1,6 @@
+- [ ] Extract `attachDelegates(target: GeckoSession)` in `MainActivity.kt`
+- [ ] Extract `createSession(isPrivate: Boolean)` in `MainActivity.kt`
+- [ ] Implement `switchToTab(tab: BrowserTab)` in `MainActivity.kt`
+- [ ] Refactor `setupGeckoView()` to use `createSession()`
+- [ ] Verify build with `./gradlew :app:assembleDebug`
+- [ ] Create walkthrough artifact

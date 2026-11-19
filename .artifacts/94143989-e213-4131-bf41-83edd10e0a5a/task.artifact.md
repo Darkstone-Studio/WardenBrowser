@@ -1,0 +1,4 @@
+- [x] Add `needsReload` to `BrowserTab.kt`
+- [x] Update `onCrash` and `onKill` in `MainActivity.kt`
+- [x] Implement lazy reload in `switchToTab` in `MainActivity.kt`
+- [x] Verify changes

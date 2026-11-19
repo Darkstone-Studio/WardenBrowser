@@ -724,42 +724,45 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showOverflowMenu() {
-        val view = findViewById<View>(R.id.nav_menu)
-        val popup = androidx.appcompat.widget.PopupMenu(
-            ContextThemeWrapper(this, R.style.PopupMenuOverlay),
-            view
+        val dialog = com.google.android.material.bottomsheet.BottomSheetDialog(this)
+        val sheet = layoutInflater.inflate(R.layout.dialog_menu_sheet, null)
+        dialog.setContentView(sheet)
+
+        // Panel arka planı (yuvarlak üst köşeler)
+        dialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+            ?.setBackgroundResource(R.drawable.bg_menu_sheet)
+        dialog.behavior.state = com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
+        dialog.behavior.skipCollapsed = true
+
+        // Kısayol kartı ikonları uygulamanın vurgu rengini izler (gizli modda mor)
+        val accent = androidx.core.content.ContextCompat.getColor(
+            this, if (isPrivateMode) R.color.private_mode_accent else R.color.accent_blue
         )
-        popup.menuInflater.inflate(R.menu.overflow_menu, popup.menu)
-        
-        // Force icons to show
-        try {
-            val fields = popup.javaClass.getDeclaredField("mPopup")
-            fields.isAccessible = true
-            val menuPopupHelper = fields.get(popup)
-            menuPopupHelper?.javaClass
-                ?.getMethod("setForceShowIcon", Boolean::class.javaPrimitiveType)
-                ?.invoke(menuPopupHelper, true)
-        } catch (e: Exception) {
-            e.printStackTrace()
+        listOf(R.id.sheetBookmarksIcon, R.id.sheetHistoryIcon, R.id.sheetDownloadsIcon).forEach { id ->
+            sheet.findViewById<android.widget.ImageView>(id)
+                .imageTintList = android.content.res.ColorStateList.valueOf(accent)
         }
 
-        popup.setOnMenuItemClickListener { menuItem ->
-            when (menuItem.itemId) {
-                R.id.menu_bookmarks -> startActivity(Intent(this, BookmarksActivity::class.java))
-                R.id.menu_history -> startActivity(Intent(this, HistoryActivity::class.java))
-                R.id.menu_downloads -> startActivity(Intent(this, DownloadsActivity::class.java))
-                R.id.menu_theme -> showThemeSelector()
-                R.id.menu_settings -> startActivity(Intent(this, SettingsActivity::class.java))
-                R.id.menu_about -> startActivity(Intent(this, AboutActivity::class.java))
-                R.id.menu_clear_exit -> {
-                    dbHelper.clearHistory()
-                    Toast.makeText(this, getString(R.string.toast_history_cleared_exiting), Toast.LENGTH_SHORT).show()
-                    finishAffinity()
-                }
+        fun onClick(id: Int, action: () -> Unit) {
+            sheet.findViewById<View>(id).setOnClickListener {
+                dialog.dismiss()
+                action()
             }
-            true
         }
-        popup.show()
+
+        onClick(R.id.sheetBookmarks) { startActivity(Intent(this, BookmarksActivity::class.java)) }
+        onClick(R.id.sheetHistory) { startActivity(Intent(this, HistoryActivity::class.java)) }
+        onClick(R.id.sheetDownloads) { startActivity(Intent(this, DownloadsActivity::class.java)) }
+        onClick(R.id.sheetTheme) { showThemeSelector() }
+        onClick(R.id.sheetSettings) { startActivity(Intent(this, SettingsActivity::class.java)) }
+        onClick(R.id.sheetAbout) { startActivity(Intent(this, AboutActivity::class.java)) }
+        onClick(R.id.sheetClearExit) {
+            dbHelper.clearHistory()
+            Toast.makeText(this, getString(R.string.toast_history_cleared_exiting), Toast.LENGTH_SHORT).show()
+            finishAffinity()
+        }
+
+        dialog.show()
     }
 
     private fun showThemeSelector() {

@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingBottom="24dp">
+
+    <View
+        android:layout_width="36dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/bg_menu_handle" />
+
+    <!-- Hızlı erişim kartları -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp">
+
+        <LinearLayout
+            android:id="@+id/sheetBookmarks"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="6dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_menu_tile"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingTop="16dp"
+            android:paddingBottom="14dp">
+
+            <ImageView
+                android:id="@+id/sheetBookmarksIcon"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_bookmarks" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/menu_bookmarks"
+                android:textColor="@color/text_primary"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/sheetHistory"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:layout_marginEnd="6dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_menu_tile"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingTop="16dp"
+            android:paddingBottom="14dp">
+
+            <ImageView
+                android:id="@+id/sheetHistoryIcon"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_history" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/menu_history"
+                android:textColor="@color/text_primary"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/sheetDownloads"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_menu_tile"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingTop="16dp"
+            android:paddingBottom="14dp">
+
+            <ImageView
+                android:id="@+id/sheetDownloadsIcon"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_download" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/menu_downloads"
+                android:textColor="@color/text_primary"
+                android:textSize="12sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Satırlar -->
+    <LinearLayout
+        android:id="@+id/sheetTheme"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginTop="12dp"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp">
+
+        <ImageView
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_palette" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="18dp"
+            android:text="@string/menu_theme"
+            android:textColor="@color/text_primary"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/sheetSettings"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp">
+
+        <ImageView
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_settings" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="18dp"
+            android:text="@string/menu_settings"
+            android:textColor="@color/text_primary"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/sheetAbout"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp">
+
+        <ImageView
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_info" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="18dp"
+            android:text="@string/menu_about"
+            android:textColor="@color/text_primary"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="4dp"
+        android:background="@color/card_stroke" />
+
+    <LinearLayout
+        android:id="@+id/sheetClearExit"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp">
+
+        <ImageView
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_delete"
+            app:tint="@color/danger_red" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="18dp"
+            android:text="@string/menu_clear_exit"
+            android:textColor="@color/danger_red"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+</LinearLayout>

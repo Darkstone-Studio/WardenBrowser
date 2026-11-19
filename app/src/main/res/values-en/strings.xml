@@ -26,6 +26,8 @@
     <string name="pref_tracker_blocking_summary">Blocks ads and analytics tracking scripts</string>
     <string name="pref_safe_browsing">Safe Browsing</string>
     <string name="pref_safe_browsing_summary">Warns against malicious and phishing sites</string>
+    <string name="pref_https_only">HTTPS-Only Mode</string>
+    <string name="pref_https_only_summary">Warns before opening unencrypted (http) connections</string>
     <string name="pref_category_data">Clear Data</string>
     <string name="pref_clear_cookies">Clear Cookies</string>
     <string name="pref_clear_cache">Clear Cache</string>

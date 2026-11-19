@@ -42,6 +42,7 @@ class WardenApp : Application() {
             val prefs = PreferenceManager.getDefaultSharedPreferences(this)
             val trackerBlockingEnabled = prefs.getBoolean("tracker_blocking_enabled", true)
             val safeBrowsingEnabled = prefs.getBoolean("safe_browsing_enabled", true)
+            val httpsOnlyEnabled = prefs.getBoolean("https_only_enabled", true)
 
             val settings = GeckoRuntimeSettings.Builder()
                 .contentBlocking(
@@ -50,6 +51,9 @@ class WardenApp : Application() {
                         .cookieBehavior(ContentBlocking.CookieBehavior.ACCEPT_NON_TRACKERS)
                         .safeBrowsing(if (safeBrowsingEnabled) ContentBlocking.SafeBrowsing.DEFAULT else ContentBlocking.SafeBrowsing.NONE)
                         .build()
+                )
+                .allowInsecureConnections(
+                    if (httpsOnlyEnabled) GeckoRuntimeSettings.HTTPS_ONLY else GeckoRuntimeSettings.ALLOW_ALL
                 )
                 .build()
             geckoRuntime = GeckoRuntime.create(this, settings)

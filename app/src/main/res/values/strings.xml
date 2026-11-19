@@ -26,6 +26,8 @@
     <string name="pref_tracker_blocking_summary">Reklam ve analitik takip scriptlerini engeller</string>
     <string name="pref_safe_browsing">Güvenli Gezinme</string>
     <string name="pref_safe_browsing_summary">Kötü amaçlı ve kimlik avı sitelerine karşı uyarır</string>
+    <string name="pref_https_only">Yalnızca HTTPS</string>
+    <string name="pref_https_only_summary">Şifrelenmemiş (http) bağlantılar açılmadan önce uyarır</string>
     <string name="pref_category_data">Veri Temizleme</string>
     <string name="pref_clear_cookies">Çerezleri Temizle</string>
     <string name="pref_clear_cache">Önbelleği Temizle</string>

@@ -128,6 +128,17 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
             true
         }
 
+        // Yalnızca HTTPS
+        findPreference<SwitchPreferenceCompat>("https_only_enabled")?.setOnPreferenceChangeListener { _, newValue ->
+            val enabled = newValue as Boolean
+            val runtime = (requireActivity().application as WardenApp).geckoRuntime
+            runtime.settings.setAllowInsecureConnections(
+                if (enabled) org.mozilla.geckoview.GeckoRuntimeSettings.HTTPS_ONLY
+                else org.mozilla.geckoview.GeckoRuntimeSettings.ALLOW_ALL
+            )
+            true
+        }
+
         // Dil Değiştirme
         findPreference<androidx.preference.ListPreference>("app_language")?.setOnPreferenceChangeListener { _, newValue ->
             val localeTag = when (newValue as String) {

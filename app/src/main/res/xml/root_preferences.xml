@@ -40,6 +40,11 @@
             app:key="safe_browsing_enabled"
             app:title="@string/pref_safe_browsing"
             app:summary="@string/pref_safe_browsing_summary" />
+        <SwitchPreferenceCompat
+            app:defaultValue="true"
+            app:key="https_only_enabled"
+            app:title="@string/pref_https_only"
+            app:summary="@string/pref_https_only_summary" />
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/pref_category_data">

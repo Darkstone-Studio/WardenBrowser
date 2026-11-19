@@ -314,7 +314,7 @@ class MainActivity : AppCompatActivity() {
                     return GeckoResult.fromValue("") 
                 }
 
-                android.util.Log.d("GeckoError", "Category: ${error.category}, Code: ${error.code}, URI: $uri")
+                android.util.Log.d("GeckoError", "Category: ${error.category}, Code: ${error.code}")
                 
                 return try {
                     if (error.category == WebRequestError.ERROR_CATEGORY_NETWORK || 
@@ -691,7 +691,7 @@ class MainActivity : AppCompatActivity() {
             val url = if (trimmedQuery.contains(".") && !trimmedQuery.contains(" ")) {
                 if (trimmedQuery.startsWith("http")) trimmedQuery else "https://$trimmedQuery"
             } else {
-                "$searchUrl$trimmedQuery&pws=0&gl=tr&gws_rd=cr"
+                "$searchUrl${android.net.Uri.encode(trimmedQuery)}&pws=0&gl=tr&gws_rd=cr"
             }
             
             showBrowserView()

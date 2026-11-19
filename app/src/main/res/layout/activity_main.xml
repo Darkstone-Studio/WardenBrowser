@@ -150,17 +150,6 @@
                 android:orientation="vertical"
                 android:padding="32dp">
 
-                <TextView
-                    android:id="@+id/privateSafeText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="4dp"
-                    android:fontFamily="@font/caveat"
-                    android:text="@string/private_mode_safe_text"
-                    android:textColor="@color/private_mode_accent"
-                    android:textSize="26sp"
-                    android:visibility="gone" />
-
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -244,6 +233,21 @@
                     android:padding="8dp" />
 
             </LinearLayout>
+
+            <!-- Sütunun dışında: görünürken diğer öğelerin yerini kaydırmaz -->
+            <TextView
+                android:id="@+id/privateSafeText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@id/centralLayout"
+                android:layout_alignStart="@id/centralLayout"
+                android:layout_marginStart="32dp"
+                android:layout_marginBottom="-24dp"
+                android:fontFamily="@font/caveat"
+                android:text="@string/private_mode_safe_text"
+                android:textColor="@color/private_mode_accent"
+                android:textSize="26sp"
+                android:visibility="gone" />
         </RelativeLayout>
 
         <!-- Tarayıcı Konteyneri -->

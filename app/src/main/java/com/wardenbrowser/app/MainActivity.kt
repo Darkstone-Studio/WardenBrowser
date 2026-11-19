@@ -835,6 +835,7 @@ class MainActivity : AppCompatActivity() {
                     
                     if (homepageContainer.visibility == View.VISIBLE) {
                         centralLayout.translationY = -diff.toFloat() / 2f
+                        privateSafeText.translationY = -diff.toFloat() / 2f
                     }
                     return insets
                 }

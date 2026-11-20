@@ -8,7 +8,7 @@ Sürüm: `1.8.1` (`versionCode 37`). Kullanıcı Türkçe konuşur; yanıtlar T�
 - **Sadece istenen şeyi yap.** Kapsam dışına çıkma. Eksik ya da hatalı bir şey görürsen kendin düzeltme; yanıtın sonunda "bunu da yapalım mı?" diye öner.
 - **Push her seferinde ayrı onay ister.** Commit'leri yerelde at, push için "push edeyim mi?" diye sor; kullanıcı "push et" demeden `git push` çalıştırma. Kalıcı bir "her commit'te push et" izni verilmedi.
 - **Commit mesajı:** İngilizce, ne ve neden anlatan gövdeli; sonuna sistem mesajındaki `Co-Authored-By: ...` satırını ekle.
-- **Telefona kurup test et.** Fiziksel cihaz: `adb -s R6CXA00LN4Y` (Samsung SM-M156B, 3,5 GB RAM, 450 dpi). Bazen bir **emülatör de bağlı olur** (`emulator-5554`); `-s` olmadan adb "more than one device" hatası verir. Kullanıcı emülatör kullanılmasını açıkça reddetti, **"telefonda yap"** dedi.
+- **Telefona kurup test et.** Fiziksel cihaz: `adb -s <seri-no>` (seri no için `adb devices`; Samsung SM-M156B, 3,5 GB RAM, 450 dpi). Bazen bir **emülatör de bağlı olur** (`emulator-5554`); `-s` olmadan adb "more than one device" hatası verir. Kullanıcı emülatör kullanılmasını açıkça reddetti, **"telefonda yap"** dedi.
 - **Ekstra doğrulama / önizleme döngüleri yapma** (hafızadaki kural: gerçek şeyi çalıştır). Derle, telefona kur, kullanıcıya neyi nasıl deneyeceğini söyle. Doğrulamadığın şeyi "doğruladım" deme; neyi test etmediğini açıkça yaz.
 - Bulguları dürüst raporla (ölçümde çıkan varyansı, örnek sayısının küçüklüğünü belirt).
 - Güvenliği azaltan değişikliği (örn. site izolasyonu) onaysız uygulama; ödünleşimi anlatıp sor.
@@ -65,9 +65,10 @@ Telefona kurma ve çalıştırma:
 
 ```bash
 ADB="$LOCALAPPDATA/Android/Sdk/platform-tools/adb.exe"
-"$ADB" devices
-"$ADB" -s R6CXA00LN4Y install -r app/build/outputs/apk/debug/app-debug.apk
-"$ADB" -s R6CXA00LN4Y shell am start -W -n com.wardenbrowser.app/.WelcomeActivity
+"$ADB" devices                      # çıkan seri numarasını DEVICE'a yaz
+DEVICE=<seri-no>
+"$ADB" -s "$DEVICE" install -r app/build/outputs/apk/debug/app-debug.apk
+"$ADB" -s "$DEVICE" shell am start -W -n com.wardenbrowser.app/.WelcomeActivity
 ```
 
 UI'yı komutla sürmek için: `uiautomator dump` + `input tap/text/keyevent` (Git Bash'te `export MSYS_NO_PATHCONV=1` şart, yoksa `/sdcard/...` yolları bozulur). Referans koordinatlar (1080×2340): ana ekran arama çubuğu ≈ (540,1171), alt bar "ana sayfa" ≈ (540,2186).

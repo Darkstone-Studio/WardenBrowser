@@ -272,6 +272,7 @@
         android:layout_gravity="bottom"
         android:background="?android:attr/windowBackground"
         android:minHeight="60dp"
+        app:itemBackground="@drawable/bg_nav_item_ripple"
         app:itemIconTint="@color/accent_blue"
         app:itemTextColor="@color/accent_blue"
         app:labelVisibilityMode="unlabeled"

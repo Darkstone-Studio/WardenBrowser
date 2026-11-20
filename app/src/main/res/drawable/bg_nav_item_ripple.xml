@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Alt bar butonları için ikonun etrafında yuvarlak basma efekti.
+     Maske yok: efekt sınırsız (borderless) ve verilen yarıçapla sınırlı, hücreyi doldurmaz. -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="?attr/colorControlHighlight"
+    android:radius="26dp" />

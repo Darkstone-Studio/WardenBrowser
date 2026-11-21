@@ -1,7 +1,6 @@
 package com.wardenbrowser.app
 
 import android.content.Intent
-import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
@@ -27,7 +26,7 @@ class SettingsActivity : AppCompatActivity() {
         setupStatusBar()
 
         val toolbar = findViewById<MaterialToolbar>(R.id.toolbar)
-        toolbar.setNavigationOnClickListener { finish() }
+        toolbar.setNavigationOnClickListener { onSupportNavigateUp() }
 
         ViewCompat.setOnApplyWindowInsetsListener(toolbar) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -50,16 +49,26 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        finish()
+        if (!supportFragmentManager.popBackStackImmediate()) finish()
         return true
     }
 }
 
-class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
+class SettingsFragment : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.root_preferences, rootKey)
         
+        // Özelleştir (tema vb.)
+        findPreference<Preference>("customize")?.setOnPreferenceClickListener {
+            parentFragmentManager
+                .beginTransaction()
+                .replace(R.id.settings_container, CustomizeFragment())
+                .addToBackStack(null)
+                .commit()
+            true
+        }
+
         // Sürüm Bilgisi
         findPreference<Preference>("version")?.summary = "v${BuildConfig.VERSION_NAME}"
 
@@ -155,31 +164,21 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
             true
         }
     }
+}
 
-    override fun onResume() {
-        super.onResume()
-        preferenceManager.sharedPreferences?.registerOnSharedPreferenceChangeListener(this)
-    }
+class CustomizeFragment : PreferenceFragmentCompat() {
 
-    override fun onPause() {
-        super.onPause()
-        preferenceManager.sharedPreferences?.unregisterOnSharedPreferenceChangeListener(this)
-    }
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        setPreferencesFromResource(R.xml.customize_preferences, rootKey)
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-        when (key) {
-            "theme" -> {
-                val theme = sharedPreferences?.getString("theme", "dark")
-                applyTheme(theme)
+        // Tema
+        findPreference<androidx.preference.ListPreference>("theme")?.setOnPreferenceChangeListener { _, newValue ->
+            when (newValue as String) {
+                "light" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                "dark" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                else -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
             }
-        }
-    }
-
-    private fun applyTheme(theme: String?) {
-        when (theme) {
-            "light" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            "dark" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            else -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+            true
         }
     }
 }

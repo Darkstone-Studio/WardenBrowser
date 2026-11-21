@@ -16,6 +16,7 @@
     <string name="toast_cookies_cleared">Çerezler temizlendi</string>
     <string name="toast_cache_cleared">Önbellek temizlendi</string>
     <string name="pref_category_general">Genel</string>
+    <string name="pref_customize">Özelleştir</string>
     <string name="pref_theme">Tema</string>
     <string name="pref_search_engine">Varsayılan Arama Motoru</string>
     <string name="pref_language">Dil</string>

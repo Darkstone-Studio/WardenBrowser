@@ -9,9 +9,11 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 
 class SpeedDialAdapter(
-    private val items: List<SpeedDialItem>,
+    private val items: MutableList<SpeedDialItem>,
     private var isPrivateMode: Boolean = false,
-    private val onItemClick: (SpeedDialItem) -> Unit
+    private val onItemClick: (SpeedDialItem) -> Unit,
+    private val onAddClick: () -> Unit,
+    private val onItemLongClick: (SpeedDialItem, View) -> Unit
 ) : RecyclerView.Adapter<SpeedDialAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -26,11 +28,12 @@ class SpeedDialAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = items[position]
-        holder.nameText.text = item.name
-        holder.iconText.text = item.name.first().toString().uppercase()
-        
+        // Son hücre "+" butonudur (sınıra ulaşılmadıysa)
+        val item = items.getOrNull(position)
         val context = holder.itemView.context
+        holder.nameText.text = item?.name ?: ""
+        holder.iconText.text = item?.name?.first()?.toString()?.uppercase() ?: "+"
+
         val surfaceColor = if (isPrivateMode) {
             ContextCompat.getColor(context, R.color.private_mode_surface)
         } else {
@@ -39,9 +42,9 @@ class SpeedDialAdapter(
             context.theme.resolveAttribute(com.google.android.material.R.attr.colorSurfaceVariant, typedValue, true)
             typedValue.data
         }
-        
+
         holder.iconText.backgroundTintList = ColorStateList.valueOf(surfaceColor)
-        
+
         val textColor = if (isPrivateMode) {
             ContextCompat.getColor(context, R.color.white)
         } else {
@@ -50,7 +53,22 @@ class SpeedDialAdapter(
         }
         holder.nameText.setTextColor(textColor)
 
-        holder.itemView.setOnClickListener { onItemClick(item) }
+        holder.itemView.setOnClickListener {
+            if (item == null) onAddClick() else onItemClick(item)
+        }
+        holder.itemView.setOnLongClickListener {
+            if (item == null) false else { onItemLongClick(item, holder.itemView); true }
+        }
+    }
+
+    fun removeItem(item: SpeedDialItem) {
+        if (items.remove(item)) notifyDataSetChanged()
+    }
+
+    fun addItem(item: SpeedDialItem) {
+        if (items.size >= MAX_ITEMS) return
+        items.add(item)
+        notifyDataSetChanged()
     }
 
     fun updatePrivateMode(privateMode: Boolean) {
@@ -60,5 +78,10 @@ class SpeedDialAdapter(
         }
     }
 
-    override fun getItemCount() = items.size
+    // MAX_ITEMS'a ulaşılınca "+" butonu gösterilmez
+    override fun getItemCount() = if (items.size < MAX_ITEMS) items.size + 1 else items.size
+
+    companion object {
+        const val MAX_ITEMS = 8
+    }
 }

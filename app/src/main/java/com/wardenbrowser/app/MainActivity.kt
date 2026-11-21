@@ -164,7 +164,14 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         // Settings'den gelen değişiklikleri uygula
         applySettings()
+        applySpeedDialVisibility()
         reconcileCurrentTab()
+    }
+
+    private fun applySpeedDialVisibility() {
+        val enabled = PreferenceManager.getDefaultSharedPreferences(this)
+            .getBoolean("speed_dial_enabled", true)
+        speedDialRecyclerView.visibility = if (enabled) View.VISIBLE else View.INVISIBLE
     }
 
     private fun reconcileCurrentTab() {
@@ -874,19 +881,105 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupSpeedDial() {
-        val items = listOf(
-            SpeedDialItem("Google", "https://www.google.com"),
-            SpeedDialItem("YouTube", "https://www.youtube.com"),
-            SpeedDialItem("GitHub", "https://www.github.com"),
-            SpeedDialItem("Wikipedia", "https://www.wikipedia.org"),
-            SpeedDialItem("Reddit", "https://www.reddit.com")
-        )
-        
-        speedDialRecyclerView.layoutManager = GridLayoutManager(this, 4)
-        speedDialRecyclerView.adapter = SpeedDialAdapter(items, isPrivateMode) { item ->
-            performSearch(item.url)
+    private fun defaultSpeedDialItems() = listOf(
+        SpeedDialItem("Google", "https://www.google.com"),
+        SpeedDialItem("YouTube", "https://www.youtube.com"),
+        SpeedDialItem("GitHub", "https://www.github.com"),
+        SpeedDialItem("Wikipedia", "https://www.wikipedia.org"),
+        SpeedDialItem("Reddit", "https://www.reddit.com")
+    )
+
+    private fun loadSpeedDialItems(): MutableList<SpeedDialItem> {
+        val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+        val json = prefs.getString("speed_dial_items", null) ?: return defaultSpeedDialItems().toMutableList()
+        return try {
+            val array = org.json.JSONArray(json)
+            val list = mutableListOf<SpeedDialItem>()
+            for (i in 0 until minOf(array.length(), SpeedDialAdapter.MAX_ITEMS)) {
+                val obj = array.getJSONObject(i)
+                list.add(SpeedDialItem(obj.getString("name"), obj.getString("url")))
+            }
+            list
+        } catch (e: org.json.JSONException) {
+            defaultSpeedDialItems().toMutableList()
         }
+    }
+
+    private fun saveSpeedDialItems(items: List<SpeedDialItem>) {
+        val array = org.json.JSONArray()
+        items.forEach { array.put(org.json.JSONObject().put("name", it.name).put("url", it.url)) }
+        PreferenceManager.getDefaultSharedPreferences(this)
+            .edit().putString("speed_dial_items", array.toString()).apply()
+    }
+
+    private fun setupSpeedDial() {
+        val items = loadSpeedDialItems()
+        lateinit var adapter: SpeedDialAdapter
+        adapter = SpeedDialAdapter(items, isPrivateMode, { item ->
+            performSearch(item.url)
+        }, {
+            showAddSpeedDialDialog { newItem ->
+                adapter.addItem(newItem)
+                saveSpeedDialItems(items)
+            }
+        }, { item, anchor ->
+            val popup = android.widget.PopupMenu(this, anchor)
+            popup.menu.add(R.string.speed_dial_delete).setOnMenuItemClickListener {
+                adapter.removeItem(item)
+                saveSpeedDialItems(items)
+                true
+            }
+            popup.show()
+        })
+
+        speedDialRecyclerView.layoutManager = GridLayoutManager(this, 4)
+        speedDialRecyclerView.adapter = adapter
+
+        // Satır sayısı 1-2 arasında değişince ana ekran kaymasın: yükseklik hep 2 satırlık olsun
+        val sample = layoutInflater.inflate(R.layout.item_speed_dial, speedDialRecyclerView, false)
+        sample.measure(
+            View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+            View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+        )
+        val lp = sample.layoutParams as android.view.ViewGroup.MarginLayoutParams
+        val rowHeight = sample.measuredHeight + lp.topMargin + lp.bottomMargin
+        speedDialRecyclerView.minimumHeight =
+            rowHeight * 2 + speedDialRecyclerView.paddingTop + speedDialRecyclerView.paddingBottom
+    }
+
+    private fun showAddSpeedDialDialog(onAdd: (SpeedDialItem) -> Unit) {
+        val pad = (20 * resources.displayMetrics.density).toInt()
+        val nameInput = EditText(this).apply {
+            hint = getString(R.string.speed_dial_name_hint)
+            inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
+            setSingleLine()
+        }
+        val urlInput = EditText(this).apply {
+            hint = getString(R.string.speed_dial_url_hint)
+            inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_URI
+            setSingleLine()
+        }
+        val container = android.widget.LinearLayout(this).apply {
+            orientation = android.widget.LinearLayout.VERTICAL
+            setPadding(pad, pad / 2, pad, 0)
+            addView(nameInput)
+            addView(urlInput)
+        }
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.speed_dial_add_title)
+            .setView(container)
+            .setPositiveButton(android.R.string.ok) { _, _ ->
+                var url = urlInput.text.toString().trim()
+                if (url.isEmpty()) return@setPositiveButton
+                if (!url.contains("://")) url = "https://$url"
+                val host = android.net.Uri.parse(url).host
+                if (host.isNullOrEmpty()) return@setPositiveButton
+                val name = nameInput.text.toString().trim()
+                    .ifEmpty { host.removePrefix("www.") }
+                onAdd(SpeedDialItem(name, url))
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
     }
 
     private fun setupKeyboardAnimation() {

@@ -16,8 +16,13 @@
     <string name="toast_cookies_cleared">Çerezler temizlendi</string>
     <string name="toast_cache_cleared">Önbellek temizlendi</string>
     <string name="pref_category_general">Genel</string>
+    <string name="speed_dial_delete">Sil</string>
+    <string name="speed_dial_add_title">Kısayol ekle</string>
+    <string name="speed_dial_name_hint">Ad</string>
+    <string name="speed_dial_url_hint">Adres (örn. example.com)</string>
     <string name="pref_customize">Özelleştir</string>
     <string name="pref_theme">Tema</string>
+    <string name="pref_speed_dial">Kısayollar</string>
     <string name="pref_search_engine">Varsayılan Arama Motoru</string>
     <string name="pref_language">Dil</string>
     <string name="pref_category_advanced">Gelişmiş</string>

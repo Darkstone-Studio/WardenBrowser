@@ -8,4 +8,9 @@
         app:title="@string/pref_theme"
         app:useSimpleSummaryProvider="true" />
 
+    <SwitchPreferenceCompat
+        app:defaultValue="true"
+        app:key="speed_dial_enabled"
+        app:title="@string/pref_speed_dial" />
+
 </PreferenceScreen>

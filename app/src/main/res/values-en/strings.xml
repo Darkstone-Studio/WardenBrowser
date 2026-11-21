@@ -16,8 +16,13 @@
     <string name="toast_cookies_cleared">Cookies cleared</string>
     <string name="toast_cache_cleared">Cache cleared</string>
     <string name="pref_category_general">General</string>
+    <string name="speed_dial_delete">Delete</string>
+    <string name="speed_dial_add_title">Add shortcut</string>
+    <string name="speed_dial_name_hint">Name</string>
+    <string name="speed_dial_url_hint">Address (e.g. example.com)</string>
     <string name="pref_customize">Customize</string>
     <string name="pref_theme">Theme</string>
+    <string name="pref_speed_dial">Shortcuts</string>
     <string name="pref_search_engine">Default Search Engine</string>
     <string name="pref_language">Language</string>
     <string name="pref_category_advanced">Advanced</string>

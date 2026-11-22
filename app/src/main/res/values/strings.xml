@@ -101,6 +101,7 @@
     <string name="search_engine_icon_desc">Arama motoru ikonu</string>
     <string name="pref_support">Destek Ol! ❤️</string>
     <string name="toast_download_started">İndiriliyor: %1$s</string>
+    <string name="toast_download_completed">İndirildi: %1$s</string>
     <string name="toast_download_failed">İndirme başlatılamadı</string>
     <string name="toast_download_permission_denied">İndirme için depolama izni gerekiyor</string>
     <string name="toast_file_not_found">Dosya bulunamadı</string>

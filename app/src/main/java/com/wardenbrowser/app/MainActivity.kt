@@ -1270,25 +1270,80 @@ class MainActivity : AppCompatActivity() {
         val fileName = sanitizeFileName(rawFileName)
             ?: android.webkit.URLUtil.guessFileName(url, null, mimeType).let { sanitizeFileName(it) ?: "download" }
 
-        try {
-            val request = android.app.DownloadManager.Request(android.net.Uri.parse(url)).apply {
-                setTitle(fileName)
-                setMimeType(mimeType)
-                setNotificationVisibility(android.app.DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-                setDestinationInExternalPublicDir(android.os.Environment.DIRECTORY_DOWNLOADS, fileName)
-                setAllowedOverMetered(true)
-            }
-            val downloadManager = getSystemService(android.content.Context.DOWNLOAD_SERVICE) as android.app.DownloadManager
-            downloadManager.enqueue(request)
+        // GeckoView dosyayı zaten açtı: gövdeyi doğrudan kaydet. Aynı adresi DownloadManager ile
+        // yeniden indirmek veriyi iki kez harcıyor ve çerezsiz olduğu için girişli sitelerde başarısız oluyordu.
+        val body = response.body
+        if (body == null) {
+            Toast.makeText(this, getString(R.string.toast_download_failed), Toast.LENGTH_SHORT).show()
+            return
+        }
+        val privateDownload = isPrivateMode
+        Toast.makeText(this, getString(R.string.toast_download_started, fileName), Toast.LENGTH_SHORT).show()
 
-            val savedPath = "${android.os.Environment.DIRECTORY_DOWNLOADS}/$fileName"
-            if (!isPrivateMode) {
-                DownloadsDbHelper.getInstance(this@MainActivity).addDownload(fileName, url, savedPath, mimeType)
+        Thread({
+            // Çakışmada dosya yeniden adlandırılır; kayıt ve açma işlemi gerçek adı kullanmalı
+            val savedName = try {
+                saveToDownloads(body, fileName, mimeType)
+            } catch (e: Exception) {
+                null
             }
+            runOnUiThread {
+                if (savedName != null) {
+                    if (!privateDownload) {
+                        val savedPath = "${android.os.Environment.DIRECTORY_DOWNLOADS}/$savedName"
+                        DownloadsDbHelper.getInstance(this).addDownload(savedName, url, savedPath, mimeType)
+                    }
+                    Toast.makeText(this, getString(R.string.toast_download_completed, savedName), Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, getString(R.string.toast_download_failed), Toast.LENGTH_SHORT).show()
+                }
+            }
+        }, "download-io").start()
+    }
 
-            Toast.makeText(this@MainActivity, getString(R.string.toast_download_started, fileName), Toast.LENGTH_SHORT).show()
-        } catch (e: Exception) {
-            Toast.makeText(this@MainActivity, getString(R.string.toast_download_failed), Toast.LENGTH_SHORT).show()
+    /**
+     * Akışı herkese açık İndirilenler klasörüne yazar (Android 10+ MediaStore, öncesinde doğrudan dosya).
+     * Aynı adlı dosya varsa ezmez, "ad (1).uzantı" gibi yeni ad verir; kaydedilen gerçek adı döndürür.
+     */
+    private fun saveToDownloads(input: java.io.InputStream, fileName: String, mimeType: String): String {
+        return input.use {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                val resolver = contentResolver
+                val values = android.content.ContentValues().apply {
+                    put(android.provider.MediaStore.Downloads.DISPLAY_NAME, fileName)
+                    put(android.provider.MediaStore.Downloads.MIME_TYPE, mimeType.substringBefore(';').trim())
+                    put(android.provider.MediaStore.Downloads.RELATIVE_PATH, android.os.Environment.DIRECTORY_DOWNLOADS)
+                    put(android.provider.MediaStore.Downloads.IS_PENDING, 1)
+                }
+                val uri = resolver.insert(android.provider.MediaStore.Downloads.EXTERNAL_CONTENT_URI, values)
+                    ?: throw java.io.IOException("MediaStore insert failed")
+                try {
+                    val out = resolver.openOutputStream(uri) ?: throw java.io.IOException("No output stream")
+                    out.use { input.copyTo(it) }
+                    values.clear()
+                    values.put(android.provider.MediaStore.Downloads.IS_PENDING, 0)
+                    resolver.update(uri, values, null, null)
+                } catch (e: Exception) {
+                    resolver.delete(uri, null, null)
+                    throw e
+                }
+                resolver.query(uri, arrayOf(android.provider.MediaStore.Downloads.DISPLAY_NAME), null, null, null)?.use { c ->
+                    if (c.moveToFirst()) c.getString(0) else null
+                } ?: fileName
+            } else {
+                val dir = android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DOWNLOADS)
+                dir.mkdirs()
+                val base = fileName.substringBeforeLast('.', fileName)
+                val ext = fileName.substringAfterLast('.', "").let { if (it.isEmpty()) "" else ".$it" }
+                var target = java.io.File(dir, fileName)
+                var n = 1
+                while (target.exists()) {
+                    target = java.io.File(dir, "$base ($n)$ext")
+                    n++
+                }
+                target.outputStream().use { input.copyTo(it) }
+                target.name
+            }
         }
     }
 }

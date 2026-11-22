@@ -101,6 +101,7 @@
     <string name="search_engine_icon_desc">Search engine icon</string>
     <string name="pref_support">Support Us! ❤️</string>
     <string name="toast_download_started">Downloading: %1$s</string>
+    <string name="toast_download_completed">Downloaded: %1$s</string>
     <string name="toast_download_failed">Failed to start download</string>
     <string name="toast_download_permission_denied">Storage permission is required to download</string>
     <string name="toast_file_not_found">File not found</string>

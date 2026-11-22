@@ -844,7 +844,8 @@ class MainActivity : AppCompatActivity() {
         browserContainer.visibility = View.GONE
         homepageContainer.visibility = View.VISIBLE
         toolbarSearchBar.text.clear()
-        
+        homeSearchBar.text.clear()
+
         // Geri ikonunu gizle
         findViewById<com.google.android.material.appbar.MaterialToolbar>(R.id.toolbar).navigationIcon = null
         

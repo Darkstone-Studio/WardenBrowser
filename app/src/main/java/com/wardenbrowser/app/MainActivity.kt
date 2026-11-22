@@ -488,7 +488,21 @@ class MainActivity : AppCompatActivity() {
 
         homeSearchBar.setOnFocusChangeListener { _, hasFocus ->
             animateSearchBarFocus(homeSearchBarContainer, hasFocus)
+            animateHomeDim(hasFocus)
         }
+
+        // Boş bir yere dokunulunca arama halinden çık
+        val exitSearch = View.OnClickListener {
+            if (homeSearchBar.hasFocus() || toolbarSearchBar.hasFocus()) {
+                currentFocus?.let {
+                    WindowCompat.getInsetsController(window, it).hide(WindowInsetsCompat.Type.ime())
+                }
+                homeSearchBar.clearFocus()
+                toolbarSearchBar.clearFocus()
+            }
+        }
+        homepageContainer.setOnClickListener(exitSearch)
+        findViewById<View>(R.id.centralLayout).setOnClickListener(exitSearch)
 
         bottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
@@ -623,6 +637,39 @@ class MainActivity : AppCompatActivity() {
             .translationZ(targetElevation)
             .setDuration(200)
             .start()
+    }
+
+    private var homeDimAnimator: android.animation.ValueAnimator? = null
+
+    /** Arama çubuğu odaktayken ana ekrandaki diğer öğeleri karartır (çubuk hariç). */
+    private fun animateHomeDim(dim: Boolean) {
+        val central = findViewById<android.view.ViewGroup>(R.id.centralLayout)
+        val targets = mutableListOf<View>(findViewById(R.id.glowView), privateSafeText)
+        for (i in 0 until central.childCount) {
+            val child = central.getChildAt(i)
+            if (child !== homeSearchBarContainer) targets.add(child)
+        }
+        val paint = android.graphics.Paint()
+        homeDimAnimator?.cancel()
+        val from = if (dim) 1f else 0.2f
+        val to = if (dim) 0.2f else 1f
+        homeDimAnimator = android.animation.ValueAnimator.ofFloat(from, to).apply {
+            duration = 200
+            addUpdateListener {
+                val v = (it.animatedValue as Float)
+                val c = (v * 255).toInt().coerceIn(0, 255)
+                paint.colorFilter = android.graphics.LightingColorFilter(
+                    android.graphics.Color.rgb(c, c, c), 0
+                )
+                targets.forEach { t -> t.setLayerType(View.LAYER_TYPE_HARDWARE, paint) }
+            }
+            addListener(object : android.animation.AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: android.animation.Animator) {
+                    if (!dim) targets.forEach { t -> t.setLayerType(View.LAYER_TYPE_NONE, null) }
+                }
+            })
+            start()
+        }
     }
 
     private fun applyPrivateModeUI() {
@@ -1011,9 +1058,10 @@ class MainActivity : AppCompatActivity() {
         val imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime())
         val systemBarsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
         val diff = (imeInsets.bottom - systemBarsInsets.bottom).coerceAtLeast(0)
-        val offset = -diff.toFloat() / 2f
-        findViewById<View>(R.id.centralLayout).translationY = offset
-        privateSafeText.translationY = offset
+        // Sadece ortadaki çubuk kayar; üst çubuk odaktayken kaymaz.
+        // Çubuk zaten kaymışsa klavye inerken ona eşlik eder.
+        val moves = homeSearchBar.hasFocus() || homeSearchBarContainer.translationY != 0f
+        homeSearchBarContainer.translationY = if (moves) -diff.toFloat() / 2f else 0f
     }
 
     private fun setupBackNavigation() {

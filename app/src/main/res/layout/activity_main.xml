@@ -138,6 +138,15 @@
                 android:layout_centerInParent="true"
                 android:background="@drawable/bg_glow_yellow" />
 
+            <!-- Arama çubuğu odaktayken arka planı karartan örtü (içeriğin altında) -->
+            <View
+                android:id="@+id/homeDimScrim"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:alpha="0"
+                android:background="#000000"
+                android:importantForAccessibility="no" />
+
             <LinearLayout
                 android:id="@+id/centralLayout"
                 android:layout_width="match_parent"

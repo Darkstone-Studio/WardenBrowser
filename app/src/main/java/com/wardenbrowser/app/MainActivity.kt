@@ -662,10 +662,15 @@ class MainActivity : AppCompatActivity() {
                     android.graphics.Color.rgb(c, c, c), 0
                 )
                 targets.forEach { t -> t.setLayerType(View.LAYER_TYPE_HARDWARE, paint) }
+                // Arka plan da kararır (açık temada yalnızca yazıların kararması kötü görünüyordu)
+                findViewById<View>(R.id.homeDimScrim).alpha = 1f - v
             }
             addListener(object : android.animation.AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: android.animation.Animator) {
-                    if (!dim) targets.forEach { t -> t.setLayerType(View.LAYER_TYPE_NONE, null) }
+                    if (!dim) {
+                        targets.forEach { t -> t.setLayerType(View.LAYER_TYPE_NONE, null) }
+                        findViewById<View>(R.id.homeDimScrim).alpha = 0f
+                    }
                 }
             })
             start()

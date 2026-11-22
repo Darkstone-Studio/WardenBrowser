@@ -103,6 +103,8 @@
     <string name="toast_download_started">Downloading: %1$s</string>
     <string name="toast_download_completed">Downloaded: %1$s</string>
     <string name="toast_download_failed">Failed to start download</string>
+    <string name="update_downloaded">A new version has been downloaded</string>
+    <string name="update_restart">Restart</string>
     <string name="toast_download_permission_denied">Storage permission is required to download</string>
     <string name="toast_file_not_found">File not found</string>
     <string name="tabs_section_normal">Normal</string>

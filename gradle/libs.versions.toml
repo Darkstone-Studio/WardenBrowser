@@ -11,6 +11,7 @@ geckoview = "160.0.20261116130455"
 preference = "1.2.1"
 glide = "4.16.0"
 aboutlibraries = "14.2.1"
+playAppUpdate = "2.1.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -24,6 +25,7 @@ geckoview = { group = "org.mozilla.geckoview", name = "geckoview", version.ref =
 androidx-preference-ktx = { group = "androidx.preference", name = "preference-ktx", version.ref = "preference" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 aboutlibraries = { module = "com.mikepenz:aboutlibraries", version.ref = "aboutlibraries" }
+play-app-update = { module = "com.google.android.play:app-update", version.ref = "playAppUpdate" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

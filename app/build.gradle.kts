@@ -52,6 +52,7 @@ dependencies {
 
     implementation(libs.glide)
     implementation(libs.aboutlibraries)
+    implementation(libs.play.app.update)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.espresso.core)

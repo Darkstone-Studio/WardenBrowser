@@ -146,6 +146,7 @@ class MainActivity : AppCompatActivity() {
         setupKeyboardAnimation()
         setupBackNavigation()
         handleIntent(intent)
+        setupInAppUpdate(savedInstanceState == null)
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -166,6 +167,71 @@ class MainActivity : AppCompatActivity() {
         applySettings()
         applySpeedDialVisibility()
         reconcileCurrentTab()
+        showUpdateReadyIfDownloaded()
+    }
+
+    // --- Play Store uygulama içi güncelleme (esnek mod) ---
+    private val appUpdateManager by lazy {
+        com.google.android.play.core.appupdate.AppUpdateManagerFactory.create(this)
+    }
+    private val updateLauncher = registerForActivityResult(
+        androidx.activity.result.contract.ActivityResultContracts.StartIntentSenderForResult()
+    ) { /* Kullanıcı reddederse bir şey yapma; sonraki açılışta tekrar sorulur */ }
+    private val installStateListener =
+        com.google.android.play.core.install.InstallStateUpdatedListener { state ->
+            if (state.installStatus() == com.google.android.play.core.install.model.InstallStatus.DOWNLOADED) {
+                showUpdateReadySnackbar()
+            }
+        }
+
+    /** Play'de yeni sürüm varsa Play'in kendi "Güncelle" penceresini açar. Sadece Play'den kurulu sürümde çalışır. */
+    private fun setupInAppUpdate(askForUpdate: Boolean) {
+        try {
+            appUpdateManager.registerListener(installStateListener)
+            if (!askForUpdate) return
+            appUpdateManager.appUpdateInfo.addOnSuccessListener { info ->
+                if (info.updateAvailability() == com.google.android.play.core.install.model.UpdateAvailability.UPDATE_AVAILABLE &&
+                    info.isUpdateTypeAllowed(com.google.android.play.core.install.model.AppUpdateType.FLEXIBLE)) {
+                    appUpdateManager.startUpdateFlowForResult(
+                        info,
+                        updateLauncher,
+                        com.google.android.play.core.appupdate.AppUpdateOptions
+                            .newBuilder(com.google.android.play.core.install.model.AppUpdateType.FLEXIBLE).build()
+                    )
+                }
+            }
+            // Play'den kurulu değilse ya da Play Services yoksa sessizce geç
+        } catch (e: Exception) {
+        }
+    }
+
+    /** Güncelleme indirilmişken uygulamadan çıkılıp dönüldüyse hatırlat. */
+    private fun showUpdateReadyIfDownloaded() {
+        try {
+            appUpdateManager.appUpdateInfo.addOnSuccessListener { info ->
+                if (info.installStatus() == com.google.android.play.core.install.model.InstallStatus.DOWNLOADED) {
+                    showUpdateReadySnackbar()
+                }
+            }
+        } catch (e: Exception) {
+        }
+    }
+
+    private fun showUpdateReadySnackbar() {
+        com.google.android.material.snackbar.Snackbar
+            .make(findViewById(android.R.id.content), R.string.update_downloaded,
+                com.google.android.material.snackbar.Snackbar.LENGTH_INDEFINITE)
+            .setAnchorView(bottomNavigation)
+            .setAction(R.string.update_restart) { appUpdateManager.completeUpdate() }
+            .show()
+    }
+
+    override fun onDestroy() {
+        try {
+            appUpdateManager.unregisterListener(installStateListener)
+        } catch (e: Exception) {
+        }
+        super.onDestroy()
     }
 
     private fun applySpeedDialVisibility() {

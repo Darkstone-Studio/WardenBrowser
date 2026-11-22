@@ -103,6 +103,8 @@
     <string name="toast_download_started">İndiriliyor: %1$s</string>
     <string name="toast_download_completed">İndirildi: %1$s</string>
     <string name="toast_download_failed">İndirme başlatılamadı</string>
+    <string name="update_downloaded">Yeni sürüm indirildi</string>
+    <string name="update_restart">Yeniden başlat</string>
     <string name="toast_download_permission_denied">İndirme için depolama izni gerekiyor</string>
     <string name="toast_file_not_found">Dosya bulunamadı</string>
     <string name="tabs_section_normal">Normal</string>

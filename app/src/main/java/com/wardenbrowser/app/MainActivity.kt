@@ -427,6 +427,8 @@ class MainActivity : AppCompatActivity() {
         target.scrollDelegate = object : GeckoSession.ScrollDelegate {
             override fun onScrollChanged(session: GeckoSession, scrollX: Int, scrollY: Int) {
                 browserContainer.isEnabled = (scrollY <= 0)
+                if (session !== this@MainActivity.session) return
+                handleBarsOnScroll(scrollY)
             }
         }
 
@@ -438,7 +440,54 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private var barsHidden = false
+    private var lastScrollY = 0
+    private var scrollAccum = 0
+    private var lastBarsToggle = 0L
+
+    /** Aşağı kaydırınca üst/alt çubuğu gizler, yukarı kaydırınca geri getirir. */
+    private fun handleBarsOnScroll(scrollY: Int) {
+        val dy = scrollY - lastScrollY
+        lastScrollY = scrollY
+        if (scrollY <= 0) {
+            setBarsHidden(false)
+            return
+        }
+        // Çubuk boyutu değişince sayfa yeniden boyutlanır; o sırada gelen kaymaları yok say
+        if (android.os.SystemClock.uptimeMillis() - lastBarsToggle < 400) return
+        val threshold = (12 * resources.displayMetrics.density).toInt()
+        // Olaylar kare başına küçük adımlarla gelir; aynı yöndeki kaymaları biriktir
+        if (dy == 0) return
+        if ((dy > 0) != (scrollAccum > 0)) scrollAccum = 0
+        scrollAccum += dy
+        if (scrollAccum > threshold) {
+            scrollAccum = 0
+            setBarsHidden(true)
+        } else if (scrollAccum < -threshold) {
+            scrollAccum = 0
+            setBarsHidden(false)
+        }
+    }
+
+    private fun setBarsHidden(hidden: Boolean) {
+        if (barsHidden == hidden) return
+        barsHidden = hidden
+        lastBarsToggle = android.os.SystemClock.uptimeMillis()
+        (appBarLayout as com.google.android.material.appbar.AppBarLayout).setExpanded(!hidden, true)
+        // Çubuk yukarı kayarken durum çubuğu bölgesinde görünmesin diye aynı anda solar
+        findViewById<View>(R.id.toolbar).animate()
+            .alpha(if (hidden) 0f else 1f)
+            .setDuration(200)
+            .start()
+        bottomNavigation.animate()
+            .translationY(if (hidden) bottomNavigation.height.toFloat() else 0f)
+            .setDuration(200)
+            .start()
+    }
+
     private fun switchToTab(tab: BrowserTab) {
+        lastScrollY = 0
+        setBarsHidden(false)
         if (tab.needsReload) {
             tab.needsReload = false
             recreateTabSession(tab, false)
@@ -850,6 +899,8 @@ class MainActivity : AppCompatActivity() {
         homepageContainer.visibility = View.VISIBLE
         toolbarSearchBar.text.clear()
         homeSearchBar.text.clear()
+        lastScrollY = 0
+        setBarsHidden(false)
 
         // Geri ikonunu gizle
         findViewById<com.google.android.material.appbar.MaterialToolbar>(R.id.toolbar).navigationIcon = null

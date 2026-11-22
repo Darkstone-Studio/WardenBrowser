@@ -20,6 +20,7 @@
             android:clipChildren="false"
             android:clipToPadding="false"
             app:contentInsetStartWithNavigation="0dp"
+            app:layout_scrollFlags="scroll|enterAlways"
             app:navigationIconTint="@color/icon_gray">
 
             <RelativeLayout
@@ -238,6 +239,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="32dp"
                     android:clipToPadding="false"
+                    android:nestedScrollingEnabled="false"
                     android:padding="8dp" />
 
             </LinearLayout>

@@ -1,7 +1,7 @@
 # CLAUDE.md — Warden Browser
 
 GeckoView (Firefox motoru) tabanlı sade bir Android tarayıcı. Kotlin, tek modül (`:app`), paket `com.wardenbrowser.app`.
-Sürüm: `1.8.1` (`versionCode 37`). Kullanıcı Türkçe konuşur; yanıtlar Türkçe olmalı.
+Sürüm: `1.8.2` (`versionCode 38`). Kullanıcı Türkçe konuşur; yanıtlar Türkçe olmalı.
 
 ## Çalışma kuralları (kullanıcı tercihleri — öncelikli)
 
@@ -84,7 +84,7 @@ UI'yı komutla sürmek için: `uiautomator dump` + `input tap/text/keyevent` (Gi
 - **Düzenleme araçları:** Bu ortamda çok satırlı Bash heredoc'ları bazen bozulur (`unexpected EOF`); dosya yazmak için Write aracını, çok satırlı değiştirmeler için `python` betiğini kullan. Python `/tmp` yolunu Git Bash ile paylaşmaz; geçici dosyaları scratchpad'e yaz. Python'da `\'` gibi kaçışlar için `chr(92)` kullanmak güvenli.
 - Kotlin dizesinde `"\n"` yazarken Python'dan geçirirsen gerçek satır sonuna dönüşebilir (hata sayfası bilgi penceresinde yaşandı); sonucu mutlaka gözle kontrol et.
 - `.idea/misc.xml` Android Studio tarafından sürekli değiştirilir; **commit'e alma**. Uzak depoda ayrıca `.artifacts/` ve `.idea/planningMode.xml` takipli (yerel `.gitignore`'a rağmen).
-- **Klasör adı hâlâ `WardenBrowser v1.8.0`**; sürüm 1.8.1 olduğu halde yeniden adlandırılamadı (Android Studio ve oturum klasörü açık tutuyor). Kullanıcı kapatınca elle `v1.8.1` yapacak.
+- **Klasör adı hâlâ `WardenBrowser v1.8.0`**; sürüm 1.8.2 olduğu halde yeniden adlandırılamadı (Android Studio ve oturum klasörü açık tutuyor). Kullanıcı kapatınca elle `v1.8.2` yapacak.
 - **Çeviri:** Her yeni metin için hem `values/strings.xml` (TR) hem `values-en/strings.xml` ekle. İngilizce dizelerde kesme işareti `\'` ile kaçırılır.
 - Gizli mod her zaman koyu mor palet kullanır (`private_mode_*` renkleri), açık/koyu temadan bağımsızdır.
 - README'deki sürüm/rozet metinleri sürüm yükseltmede elle güncellenir (`Download v...`, `Android SDK v26+`).
